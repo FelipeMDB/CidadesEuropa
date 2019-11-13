@@ -3,5 +3,39 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
+    android:minWidth="25px"
+    android:minHeight="25px">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="De: " />
+        <Spinner
+            android:layout_width="500px"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinnerOrigem"
+            android:gravity="right"/>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Para: " />
+        <Spinner
+            android:layout_width="500px"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinnerDestino"
+            android:gravity="right" />
+    </LinearLayout>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnBuscar"
+        android:text="Buscar" />
 </LinearLayout>
