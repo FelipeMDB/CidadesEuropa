@@ -12,12 +12,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="De: " />
+            android:text="De: "
+            android:gravity="left_horizontal" />
         <Spinner
             android:layout_width="500px"
             android:layout_height="wrap_content"
             android:id="@+id/spinnerOrigem"
-            android:gravity="right"/>
+            android:gravity="right" />
     </LinearLayout>
     <LinearLayout
         android:orientation="horizontal"
@@ -38,4 +39,10 @@
         android:layout_height="wrap_content"
         android:id="@+id/btnBuscar"
         android:text="Buscar" />
+    <ImageView
+        android:src="@drawable/mapaespanhaportugal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgMapa"
+        android:layout_marginBottom="0.0dp" />
 </LinearLayout>
