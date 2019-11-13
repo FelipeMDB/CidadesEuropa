@@ -1,0 +1,54 @@
+ 0Covilhã         0,252 0,479
+ 1A Coruna        0,195 0,151
+ 2Albacete        0,609 0,609
+ 3Alicante        0,697 0,675
+ 4Barcelona       0,864 0,363
+ 5Bilbao          0,542 0,164
+ 6Braga           0,194 0,344
+ 7Burgos          0,494 0,261
+ 8Caceres         0,324 0,561
+ 9Cadiz           0,327 0,854
+10Cartagena       0,666 0,751
+11Castelo Branco  0,252 0,524
+12Coimbra         0,193 0,485
+13Cordoba         0,425 0,721
+14El Ejido        0,550 0,832
+15Gijon           0,369 0,131
+16Girona          0,907 0,299
+17Granada         0,498 0,791
+18Guadalajara     0,527 0,443
+19Guarda          0,266 0,452
+20Huelva          0,287 0,784
+21Jaen            0,488 0,734
+22Leon            0,375 0,235
+23Lisboa          0,148 0,638
+24Lleida          0,768 0,339
+25Logrono         0,572 0,249
+26Lorca           0,619 0,742
+27Loule           0,218 0,796
+28Lugo            0,248 0,192
+29Madrid          0,492 0,462
+30Malaga          0,446 0,837
+31Mataro          0,882 0,350
+32Montpellier     0,976 0,126
+33Murcia          0,655 0,710
+34Ourense         0,229 0,261
+35Oviedo          0,356 0,152
+36Pau             0,703 0,159
+37Perpignan       0,911 0,223
+38Pombal          0,179 0,517
+39Ponferrada      0,310 0,240
+40Porto           0,180 0,388
+41Salamanca       0,368 0,407
+42San Sebastian   0,601 0,156
+43Santander       0,487 0,141
+44Santiago de C.  0,185 0,206
+45Sevilha         0,347 0,770
+46Tarragona       0,806 0,391
+47Toledo          0,471 0,521
+48Toulouse        0,817 0,126
+49Valencia        0,702 0,561
+50Valladolid      0,425 0,334
+51Vigo            0,174 0,272
+52Viseu           0,225 0,439
+53Zaragoza        0,672 0,334

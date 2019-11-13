@@ -61,7 +61,24 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:text="Resultados: "
-                android:id="@+id/tvRes" />
+                android:id="@+id/textView4" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btnAddCidade"
+                    android:text="+Cidade"
+                    android:layout_gravity="center_horizontal" />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btnAddCaminho"
+                    android:text="+Caminho"
+                    android:layout_gravity="center_horizontal" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
