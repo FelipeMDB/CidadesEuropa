@@ -2,6 +2,7 @@
 using Android.Widget;
 using Android.OS;
 using System.IO;
+using System;
 
 namespace CidadesEuropa
 {
@@ -18,15 +19,28 @@ namespace CidadesEuropa
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
+            var caminho = global::Android.OS.Environment.ExternalStorageDirectory.AbsolutePath;
+            var nomeArquivo = Path.Combine(caminho.ToString(), "Cidades.txt");
+            
 
-            StreamReader leitor = new StreamReader("Cidades.txt");
-
-            while (!leitor.EndOfStream)
+            try
             {
-                Cidade cidade = Cidade.LerArquivo(leitor);
-                listaCidades.InserirAposFim(cidade);
+                using (StreamReader leitor = new StreamReader(nomeArquivo))
+                {
+                    while (!leitor.EndOfStream)
+                    {
+                        leitor.ReadLine();
+                        Cidade cidade = Cidade.LerArquivo(leitor);
+                        listaCidades.InserirAposFim(cidade);
+                    }
+                    leitor.Close();
+                }
             }
-            leitor.Close();
+            catch (Exception e)
+            {
+                var x = e.StackTrace;
+            }
+
 
 
         }
