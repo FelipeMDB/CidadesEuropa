@@ -3,6 +3,7 @@ using Android.Widget;
 using Android.OS;
 using System.IO;
 using System;
+using Android.Content.Res;
 
 namespace CidadesEuropa
 {
@@ -18,32 +19,20 @@ namespace CidadesEuropa
 
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
-
-            var caminho = global::Android.OS.Environment.ExternalStorageDirectory.AbsolutePath;
-            var nomeArquivo = Path.Combine(caminho.ToString(), "Cidades.txt");
             
+            AssetManager assets = this.Assets;
 
-            try
+            using (StreamReader leitor = new StreamReader(assets.Open("Cidades.txt")))
             {
-                using (StreamReader leitor = new StreamReader(nomeArquivo))
+                while (!leitor.EndOfStream)
                 {
-                    while (!leitor.EndOfStream)
-                    {
-                        leitor.ReadLine();
-                        Cidade cidade = Cidade.LerArquivo(leitor);
-                        listaCidades.InserirAposFim(cidade);
-                    }
-                    leitor.Close();
+                    leitor.ReadLine();
+                    Cidade cidade = Cidade.LerArquivo(leitor);
+                    listaCidades.InserirAposFim(cidade);
                 }
             }
-            catch (Exception e)
-            {
-                var x = e.StackTrace;
-            }
-
-
-
         }
+
     }
 }
 

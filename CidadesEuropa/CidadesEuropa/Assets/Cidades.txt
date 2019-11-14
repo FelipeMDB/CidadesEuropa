@@ -1,4 +1,4 @@
- 0Covilh�         0,252 0,479
+﻿ 0Covilhã         0,252 0,479
  1A Coruna        0,195 0,151
  2Albacete        0,609 0,609
  3Alicante        0,697 0,675
