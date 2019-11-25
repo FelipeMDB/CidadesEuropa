@@ -19,7 +19,7 @@ class Cidade : IComparable<Cidade>
     const int tamanhoNomeCidade = 16;
     const int inicioNomeCidade = tamanhoIdCidade + inicioIdCidade;
     double coordenadaX;
-    const int tamanhoCoordenadaX = 6;
+    const int tamanhoCoordenadaX = 5;
     const int inicioCoordenadaX = inicioNomeCidade + tamanhoNomeCidade;
     double coordenadaY;
     const int tamanhoCoordenadaY = 5;
@@ -34,7 +34,7 @@ class Cidade : IComparable<Cidade>
 
     //construtor da classe
     //parâmetros: id da cidade, nome da cidade, coordenada x, coordenada y
-    public Cidade(int id, string nome, int x, int y)
+    public Cidade(int id, string nome, double x, double y)
     {
         idCidade = id;
         nomeCidade = nome;
@@ -46,10 +46,10 @@ class Cidade : IComparable<Cidade>
     public static Cidade LerArquivo(StreamReader arq)
     {
         string linha = arq.ReadLine();
-        int idCidade = int.Parse(linha.Substring(inicioIdCidade, tamanhoIdCidade));
+        int idCidade = int.Parse(linha.Substring(inicioIdCidade, tamanhoIdCidade).Trim());
         string nomeCidade = linha.Substring(inicioNomeCidade, tamanhoNomeCidade).Trim();
-        int coordenadaX = int.Parse(linha.Substring(inicioCoordenadaX, tamanhoCoordenadaX));
-        int coordenadaY = int.Parse(linha.Substring(inicioCoordenadaY, tamanhoCoordenadaY));
+        double coordenadaX = double.Parse(linha.Substring(inicioCoordenadaX, tamanhoCoordenadaX).Trim());
+        double coordenadaY = double.Parse(linha.Substring(inicioCoordenadaY, tamanhoCoordenadaY).Trim());
         return new Cidade(idCidade, nomeCidade, coordenadaX, coordenadaY);
     }
 
