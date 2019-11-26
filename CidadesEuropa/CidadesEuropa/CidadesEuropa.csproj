@@ -54,12 +54,18 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BucketHash.cs" />
     <Compile Include="Cidade.cs" />
+    <Compile Include="DistOriginal.cs" />
+    <Compile Include="Grafo.cs" />
+    <Compile Include="InformacoesPercurso.cs" />
     <Compile Include="ListaSimples.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="MyView.cs" />
     <Compile Include="NoLista.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Vertice.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GettingStarted.Xamarin" />

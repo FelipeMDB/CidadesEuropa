@@ -24,6 +24,7 @@
                     android:layout_width="200px"
                     android:layout_height="wrap_content"
                     android:text="De: "
+                    android:textSize="25dp"
                     android:id="@+id/textView1" />
                 <Spinner
                     android:layout_width="match_parent"
@@ -50,6 +51,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/btnBuscar"
                 android:text="Buscar"
+                android:paddingTop="20px"
                 android:layout_gravity="center_horizontal" />
             <ImageView
                 android:src="@drawable/mapaespanhaportugal"
