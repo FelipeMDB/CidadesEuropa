@@ -6,13 +6,14 @@ using System;
 using Android.Content.Res;
 using System.Collections;
 using Android.Views;
+using Android.Content;
 
 namespace CidadesEuropa
 {
     [Activity(Label = "CidadesEuropa", MainLauncher = true)]
     public class MainActivity : Activity
     {
-        Button btnBuscar, btnCidades, btn;
+        Button btnBuscar, btnAddCidade, btnAddCaminho;
         Spinner sOrigem, sDestino;
         TextView tvResultado;
 
@@ -30,6 +31,8 @@ namespace CidadesEuropa
             sOrigem = FindViewById<Spinner>(Resource.Id.spinnerOrigem);
             sDestino = FindViewById<Spinner>(Resource.Id.spinnerDestino);
             tvResultado = FindViewById<TextView>(Resource.Id.tvResultado);
+            btnAddCidade = FindViewById<Button>(Resource.Id.btnAddCidade);
+            btnAddCaminho = FindViewById<Button>(Resource.Id.btnAddCaminho);
 
            // MyView view = new MyView(this);
            // LinearLayout layout = FindViewById<LinearLayout>(Resource.Id.linearLayout4);
@@ -60,9 +63,15 @@ namespace CidadesEuropa
 
             btnBuscar.Click += delegate
             {
-                
                 BuscarCaminho(sOrigem.SelectedItem.ToString(), sDestino.SelectedItem.ToString(), false);
             };
+
+            btnAddCidade.Click += delegate
+             {
+                 Intent intent = new Intent(this, typeof(AdicionarCidadeActivity));
+                 intent.PutExtra("listaCidades", false);
+                 StartActivity(intent);
+             };
         }
 
         private void MontarMatriz()
