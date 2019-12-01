@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+	<EditText
+		android:id="@+id/edtNomeCidade"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:hint="Digite o nome da cidade"
+	/>
+
+	<EditText
+		android:id="@+id/edtXCidade"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:hint="Digite a coordenada X da cidade"
+	/>
+
+	<EditText
+		android:id="@+id/edtYCidade"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:hint="Digite a coordenada Y da cidade"
+	/>
+
+	<Button
+        android:id="@+id/btnAdicionarCidade"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Inserir"
+        android:layout_gravity="center_horizontal" />
+
+</LinearLayout>

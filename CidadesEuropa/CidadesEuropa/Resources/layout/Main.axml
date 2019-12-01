@@ -64,6 +64,12 @@
                 android:layout_gravity="left"
                 android:text="Resultados: "
                 android:id="@+id/tvRes" />
+			<TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:text="Resultados: "
+                android:id="@+id/tvRes" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

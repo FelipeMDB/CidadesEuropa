@@ -6,12 +6,11 @@ class Grafo
 {
     private const int NUM_VERTICES = 100;
     private Vertice[] vertices;
-    private int[,] adjMatrix;
+    private InformacoesPercurso[,] adjMatrix;
     int numVerts;
 
     /// DJIKSTRA
     bool usarTempo = false;
-    InformacoesPercurso[] percurso2;
     DistOriginal[] percurso;
     int infinity = 1000000;
     int verticeAtual;   // global usada para indicar o vértice atualmente sendo visitado 
@@ -20,19 +19,19 @@ class Grafo
 
     public bool UsarTempo { get => usarTempo; set => usarTempo = value; }
 
-    public Grafo(int num)
+    public Grafo(bool t)
     {
+        usarTempo = t;
         vertices = new Vertice[NUM_VERTICES];
-        adjMatrix = new int[NUM_VERTICES, NUM_VERTICES];
+        adjMatrix = new InformacoesPercurso[NUM_VERTICES, NUM_VERTICES];
         numVerts = 0;
         nTree = 0;
 
         for (int j = 0; j < NUM_VERTICES; j++)      // zera toda a matriz
             for (int k = 0; k < NUM_VERTICES; k++)
-                adjMatrix[j, k] = infinity; // distância tão grande que não existe
+                adjMatrix[j, k] = new InformacoesPercurso(infinity, infinity); // distância e tempo tão grandes que não existem
 
         percurso = new DistOriginal[NUM_VERTICES];
-        percurso2 = new InformacoesPercurso[NUM_VERTICES];
     }
 
     public void NovoVertice(string label)
@@ -41,17 +40,123 @@ class Grafo
         numVerts++;
     }
 
-    public void NovaAresta(int origem, int destino)
-    {
-        adjMatrix[origem, destino] = 1;
-    }
-
-    public void NovaAresta(int origem, int destino, int peso)
+    public void NovaAresta(int origem, int destino, InformacoesPercurso peso)
     {
         adjMatrix[origem, destino] = peso;
     }
 
-    public void ExibirVertice(int v)
+    public string[] Caminho(int inicioDoPercurso, int finalDoPercurso)
+    {
+        for (int j = 0; j < numVerts; j++)
+            vertices[j].foiVisitado = false;
+
+        vertices[inicioDoPercurso].foiVisitado = true;
+        for (int j = 0; j < numVerts; j++)
+        {
+            // anotamos no vetor percurso a distância entre o inicioDoPercurso e cada vértice
+            // se não há ligação direta, o valor da distância será infinity
+            percurso[j] = new DistOriginal(inicioDoPercurso, adjMatrix[inicioDoPercurso, j].Distancia, adjMatrix[inicioDoPercurso, j].Tempo);
+        }
+
+        for (int nTree = 0; nTree < numVerts; nTree++)
+        {
+            // Procuramos a saída não visitada do vértice inicioDoPercurso com a menor distância
+            int indiceDoMenor = ObterMenor();
+
+            // e anotamos essa menor distância
+            int distanciaMinima = percurso[indiceDoMenor].distancia;
+
+
+            // o vértice com a menor distância passa a ser o vértice atual
+            // para compararmos com a distância calculada em AjustarMenorCaminho()
+            verticeAtual = indiceDoMenor;
+            doInicioAteAtual = percurso[indiceDoMenor].distancia;
+
+            // visitamos o vértice com a menor distância desde o inicioDoPercurso
+            vertices[verticeAtual].foiVisitado = true;
+            AjustarMenorCaminho();
+        }
+
+        return ExibirPercursos(inicioDoPercurso, finalDoPercurso);
+    }
+
+    public int ObterMenor()
+    {
+        int indiceDaMinima = 0;
+
+        int distanciaMinima = infinity;
+        for (int j = 0; j < numVerts; j++)
+            if (!(vertices[j].foiVisitado) && (percurso[j].distancia < distanciaMinima))
+            {
+                distanciaMinima = percurso[j].distancia;
+                indiceDaMinima = j;
+            }
+        return indiceDaMinima;
+    }
+
+    public void AjustarMenorCaminho()
+    {
+        for (int coluna = 0; coluna < numVerts; coluna++)
+            if (!vertices[coluna].foiVisitado)       // para cada vértice ainda não visitado
+            {
+                // acessamos a distância desde o vértice atual (pode ser infinity)
+                int atualAteMargem = adjMatrix[verticeAtual, coluna].Distancia;
+
+                // calculamos a distância desde inicioDoPercurso passando por vertice atual até
+                // esta saída
+                int doInicioAteMargem = doInicioAteAtual + atualAteMargem;
+
+                // quando encontra uma distância menor, marca o vértice a partir do
+                // qual chegamos no vértice de índice coluna, e a soma da distância
+                // percorrida para nele chegar
+                int distanciaDoCaminho = percurso[coluna].distancia;
+                if (doInicioAteMargem < distanciaDoCaminho)
+                {
+                    percurso[coluna].verticePai = verticeAtual;
+                    percurso[coluna].distancia = doInicioAteMargem;
+                }
+            }
+    }
+
+    public string[] ExibirPercursos(int inicioDoPercurso, int finalDoPercurso)
+    {
+        string[] oCaminho = new string[percurso.Length];
+        
+        int onde = finalDoPercurso;
+        Stack<string> pilha = new Stack<string>();
+
+        int cont = 0;
+        while (onde != inicioDoPercurso)
+        {
+            onde = percurso[onde].verticePai;
+            pilha.Push(vertices[onde].rotulo);
+            cont++;
+        }
+
+        int contador = 0;
+        while (pilha.Count != 0)
+        {
+            oCaminho[contador] = pilha.Pop();
+            
+            contador++;
+        }
+
+        if ((cont == 1) && (percurso[finalDoPercurso].distancia == infinity))
+            return null;
+        else
+            oCaminho[contador] = vertices[finalDoPercurso].rotulo;
+
+        oCaminho[contador + 1] = percurso[finalDoPercurso].distancia + "";
+        return oCaminho;
+    }
+
+    public int DoInicioAteAtual
+    {
+        get => doInicioAteAtual;
+        set => doInicioAteAtual = value;
+    }
+
+    /*public void ExibirVertice(int v)
     {
         Console.Write(vertices[v].rotulo + " ");
     }
@@ -124,7 +229,7 @@ class Grafo
 
             }
         }
-    }*/
+    }
 
     public String OrdenacaoTopologica()
     {
@@ -175,12 +280,12 @@ class Grafo
             vertices[j].foiVisitado = false;
     }
 
-    /*void ProcessarNo(int i, TextBox txt)
+    void ProcessarNo(int i, TextBox txt)
     {
         txt.Text += vertices[i].rotulo;
-    }*/
+    }
 
-    /*public void PercursoEmProfundidadeRec(int[,] adjMatrix, int numVerts, int part, TextBox txt)
+    public void PercursoEmProfundidadeRec(int[,] adjMatrix, int numVerts, int part, TextBox txt)
     {
         int i;
         ProcessarNo(part, txt);
@@ -188,7 +293,7 @@ class Grafo
         for (i = 0; i < numVerts; ++i)
             if (adjMatrix[part, i] != infinity && !vertices[i].foiVisitado)
                 PercursoEmProfundidadeRec(adjMatrix, numVerts, i, txt);
-    }*/
+    }
 
     public void PercursoPorLargura()
     {
@@ -197,7 +302,7 @@ class Grafo
         ExibirVertice(0);
         gQueue.Enqueue(0);
         int vert1, vert2;
-        while (gQueue.Count >0 )
+        while (gQueue.Count > 0)
         {
             vert1 = gQueue.Dequeue();
             vert2 = ObterVerticeAdjacenteNaoVisitado(vert1);
@@ -213,7 +318,7 @@ class Grafo
             vertices[i].foiVisitado = false;
     }
 
-    /* public void ArvoreGeradoraMinima(int primeiro, TextBox txt)
+    public void ArvoreGeradoraMinima(int primeiro, TextBox txt)
     {
         txt.Clear();
         Stack<int> gPilha = new Stack<int>(); // para guardar a sequência de vértices
@@ -238,94 +343,13 @@ class Grafo
         }
         for (int j = 0; j <= numVerts - 1; j++)
             vertices[j].foiVisitado = false;
-    }*/
-
-    /* public string Caminho(int inicioDoPercurso, int finalDoPercurso, ListBox lista)
-    {
-        for (int j = 0; j < numVerts; j++)
-            vertices[j].foiVisitado = false;
-
-        vertices[inicioDoPercurso].foiVisitado = true;
-        for (int j = 0; j < numVerts; j++)
-        {
-            // anotamos no vetor percurso a distância entre o inicioDoPercurso e cada vértice
-            // se não há ligação direta, o valor da distância será infinity
-            int tempDist = adjMatrix[inicioDoPercurso, j];
-            percurso[j] = new DistOriginal(inicioDoPercurso, tempDist);
-        }
-
-        for (int nTree = 0; nTree < numVerts; nTree++)
-        {
-            // Procuramos a saída não visitada do vértice inicioDoPercurso com a menor distância
-            int indiceDoMenor = ObterMenor();
-
-            // e anotamos essa menor distância
-            int distanciaMinima = percurso[indiceDoMenor].distancia;
-
-
-            // o vértice com a menor distância passa a ser o vértice atual
-            // para compararmos com a distância calculada em AjustarMenorCaminho()
-            verticeAtual = indiceDoMenor;
-            doInicioAteAtual = percurso[indiceDoMenor].distancia;
-
-            // visitamos o vértice com a menor distância desde o inicioDoPercurso
-            vertices[verticeAtual].foiVisitado = true;
-            AjustarMenorCaminho(lista);
-        }
-
-        return ExibirPercursos(inicioDoPercurso, finalDoPercurso, lista);
-    }*/
-
-    public int ObterMenor()
-    {
-        int indiceDaMinima = 0;
-        if (!usarTempo)
-        {
-            int distanciaMinima = infinity;
-            for (int j = 0; j < numVerts; j++)
-                if (!(vertices[j].foiVisitado) && (percurso2[j].Distancia < distanciaMinima))
-                {
-                    distanciaMinima = percurso2[j].Distancia;
-                    indiceDaMinima = j;
-                }
-            return indiceDaMinima;
-        }
-
-        int tempoMinimo = infinity;
-        for (int j = 0; j < numVerts; j++)
-            if (!(vertices[j].foiVisitado) && (percurso2[j].Distancia < tempoMinimo))
-            {
-                tempoMinimo = percurso2[j].Distancia;
-                indiceDaMinima = j;
-            }
-        return indiceDaMinima;
     }
 
-    /* public void AjustarMenorCaminho(ListBox lista)
-     {
-         for (int coluna = 0; coluna < numVerts; coluna++)
-             if (!vertices[coluna].foiVisitado)       // para cada vértice ainda não visitado
-             {
-                 // acessamos a distância desde o vértice atual (pode ser infinity)
-                 int atualAteMargem = adjMatrix[verticeAtual, coluna];
 
-                 // calculamos a distância desde inicioDoPercurso passando por vertice atual até
-                 // esta saída
-                 int doInicioAteMargem = doInicioAteAtual + atualAteMargem;
 
-                 // quando encontra uma distância menor, marca o vértice a partir do
-                 // qual chegamos no vértice de índice coluna, e a soma da distância
-                 // percorrida para nele chegar
-                 int distanciaDoCaminho = percurso[coluna].distancia;
-                 if (doInicioAteMargem < distanciaDoCaminho)
-                 {
-                     percurso[coluna].verticePai = verticeAtual;
-                     percurso[coluna].distancia = doInicioAteMargem;
-                     ExibirTabela(lista);
-                 }
-             }
-         lista.Items.Add("==================Caminho ajustado==============");
-     }
+
+
+     
 
      public void ExibirTabela(ListBox lista)
      {
@@ -343,51 +367,4 @@ class Grafo
          }
          lista.Items.Add("-----------------------------------------------------");
      }*/
-
-    /*public string ExibirPercursos(int inicioDoPercurso, int finalDoPercurso, ListBox lista)
-    {
-        string linha = "", resultado = "";
-        for (int j = 0; j < numVerts; j++)
-        {
-            linha += vertices[j].rotulo + "=";
-            if (percurso[j].distancia == infinity)
-                linha += "inf";
-            else
-                linha += percurso[j].distancia;
-            string pai = vertices[percurso[j].verticePai].rotulo;
-            linha += "(" + pai + ") ";
-        }
-        lista.Items.Add(linha);
-        lista.Items.Add("");
-        lista.Items.Add("");
-        lista.Items.Add("Caminho entre " + vertices[inicioDoPercurso].rotulo +
-                                   " e " + vertices[finalDoPercurso].rotulo);
-        lista.Items.Add("");
-
-        int onde = finalDoPercurso;
-        Stack<string> pilha = new Stack<string>();
-
-        int cont = 0;
-        while (onde != inicioDoPercurso)
-        {
-            onde = percurso[onde].verticePai;
-            pilha.Push(vertices[onde].rotulo);
-            cont++;
-        }
-
-        while (pilha.Count != 0)
-        {
-            resultado += pilha.Pop();
-            if (pilha.Count != 0)
-                resultado += " --> ";
-        }
-
-        if ((cont == 1) && (percurso[finalDoPercurso].distancia == infinity))
-            resultado = "Não há caminho";
-        else
-            resultado += " --> " + vertices[finalDoPercurso].rotulo;
-
-        return resultado;
-    }*/
-    
 }
