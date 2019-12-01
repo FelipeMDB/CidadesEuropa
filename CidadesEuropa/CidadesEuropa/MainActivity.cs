@@ -69,7 +69,7 @@ namespace CidadesEuropa
             btnAddCidade.Click += delegate
              {
                  Intent intent = new Intent(this, typeof(AdicionarCidadeActivity));
-                 intent.PutExtra("listaCidades", false);
+                 intent.Data = (listaCidades);
                  StartActivity(intent);
              };
         }
