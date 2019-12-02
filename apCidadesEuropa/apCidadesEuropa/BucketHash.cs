@@ -4,8 +4,9 @@ using System.Collections.Generic;
 
 class BucketHash
 {
-    private const int SIZE = 103;
+    public const int SIZE = 103;
     ListaSimples<Cidade>[] data;
+    
     public BucketHash()
     {
         data = new ListaSimples<Cidade>[SIZE];
@@ -28,7 +29,7 @@ class BucketHash
 
     public void Insert(Cidade c)
     {
-        int hash_value = Hash(c.NomeCidade);
+        int hash_value = Hash(c.NomeCidade.ToUpper());
         if (!data[hash_value].ExisteDado(c))
             data[hash_value].InserirAposFim(c);
     }

@@ -62,6 +62,7 @@
     <Compile Include="InformacoesPercurso.cs" />
     <Compile Include="ListaSimples.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="MyView.cs" />
     <Compile Include="NoLista.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

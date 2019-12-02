@@ -25,6 +25,7 @@ namespace apCidadesEuropa
 
         BucketHash listaCidades = new BucketHash();
         Grafo grafoCidades;
+        string[] caminho;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -39,20 +40,26 @@ namespace apCidadesEuropa
             tvResultado = FindViewById<TextView>(Resource.Id.tvResultado);
             btnAddCidade = FindViewById<Button>(Resource.Id.btnAddCidade);
             btnAddCaminho = FindViewById<Button>(Resource.Id.btnAddCaminho);
-            viewMapa = FindViewById<View>(Resource.Id.viewMapa);
+           // viewMapa = FindViewById<View>(Resource.Id.viewMapa);
             meuPaint = new Paint();
             meuCanvas = new Canvas();
 
-            // MyView view = new MyView(this);
-            // LinearLayout layout = FindViewById<LinearLayout>(Resource.Id.linearLayout4);
-            // layout.AddView(view);
+            try
+            {
+                MyView view = new MyView(this);
+                LinearLayout layout = FindViewById<LinearLayout>(Resource.Id.linearLayoutImagem);
+                layout.AddView(view);
+            }
+            catch (Exception err)
+            {
+                Toast.MakeText(this, err.Message, ToastLength.Long).Show();
+            }
 
             grafoCidades = new Grafo(false);
-            AssetManager assets = this.Assets;
 
             IList listaNomes = new ArrayList();
             int quantasCidades = 0;
-            using (StreamReader leitor = new StreamReader(assets.Open("Cidades.txt")))
+            using (StreamReader leitor = new StreamReader(Assets.Open("Cidades.txt")))
             {
                 while (!leitor.EndOfStream)
                 {
@@ -61,42 +68,15 @@ namespace apCidadesEuropa
                     quantasCidades++;
                     listaNomes.Add(cidade.NomeCidade);
                     grafoCidades.NovoVertice(cidade.NomeCidade);
-
-
-                    /*
-                    view.DesenharCidade(cidade.CoordenadaX, cidade.CoordenadaY, cidade.NomeCidade);
-
-                    meuPaint.Color = new Android.Graphics.Color(255, 0, 0);
-                    meuPaint.StrokeWidth = 10;
-                    tempBitmap = BitmapFactory.DecodeResource(Resources, Resource.Drawable.mapaEspanhaPortugal);
-                    tempBitmap = tempBitmap.Copy(Bitmap.Config.Argb8888, true);
-                    imgMapa.Draw(tempCanvas);
-
-                    tempCanvas.DrawPoint(cidade.CoordenadaX, cidade.CoordenadaY, meuPaint);
-                    
-                    */
-
-                    
-                    meuPaint.SetARGB(255, 255, 0, 0);
-
-                
-
-                    Bitmap workingBitmap = Bitmap.CreateBitmap(BitmapFactory.DecodeResource(Resources, Resource.Drawable.mapaEspanhaPortugal));
-                    Bitmap mutableBitmap = workingBitmap.Copy(Bitmap.Config.Argb8888, true);
-                    meuCanvas = new Canvas(mutableBitmap);
-
-                    meuCanvas.DrawCircle(cidade.CoordenadaX, cidade.CoordenadaY, 10, meuPaint);
-
-                    viewMapa.Draw(meuCanvas);
-
-
                 }
+                leitor.Close();
             }
 
             sOrigem.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, listaNomes);
             sDestino.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, listaNomes);
 
-            MontarMatriz();
+           // Desenhar();
+            MontarGrafo();
 
             btnBuscar.Click += delegate
             {
@@ -112,7 +92,7 @@ namespace apCidadesEuropa
 
         }
 
-        private void MontarMatriz()
+        private void MontarGrafo()
         {
             using (StreamReader leitor = new StreamReader(Assets.Open("GrafoTremEspanhaPortugal.txt")))
             {
@@ -128,12 +108,14 @@ namespace apCidadesEuropa
 
                     grafoCidades.NovaAresta(idCidadeOrigem, idCidadeDestino, new InformacoesPercurso(distancia, tempo));
                 }
+
+                leitor.Close();
             }
         }
 
         private int ProcurarCidadePorNome(string nome)
         {
-            ListaSimples<Cidade> lista = listaCidades.getPosicao(listaCidades.Hash(nome));
+            ListaSimples<Cidade> lista = listaCidades.getPosicao(listaCidades.Hash(nome.ToUpper()));
 
             NoLista<Cidade> atual = lista.Primeiro;
 
@@ -147,14 +129,61 @@ namespace apCidadesEuropa
             return -1;
         }
 
-        private void MostrarCidadesNaView()
+        private void Desenhar()
         {
+            meuPaint.SetARGB(0, 255, 0, 0);
+
+            //Bitmap workingBitmap = Bitmap.CreateBitmap(BitmapFactory.DecodeResource(Resources, Resource.Drawable.mapaEspanhaPortugal));
+            //Bitmap mutableBitmap = workingBitmap.Copy(Bitmap.Config.Argb8888, true);
+            meuCanvas = new Canvas();
+            meuCanvas.DrawBitmap(BitmapFactory.DecodeResource(Resources, Resource.Drawable.mapaEspanhaPortugal), 0, 0, null);
+            
+
+            ListaSimples<Cidade> atual;
+            for(int i=0; i<103; i++)
+            {
+                atual = listaCidades.getPosicao(i);
+                if (!atual.EstaVazia)
+                {
+                    atual.Atual = atual.Primeiro;
+                    while (atual.Atual != null)
+                    {
+                        DesenharCidade(atual.Atual.Info);
+                        atual.Atual = atual.Atual.Prox;
+                    }
+                }
+            }
+
+            if(caminho != null)
+            {
+
+            }
+
+
+            viewMapa.Draw(meuCanvas);
+        }
+
+        private void DesenharCidade(Cidade c)
+        {
+            /*
+            view.DesenharCidade(cidade.CoordenadaX, cidade.CoordenadaY, cidade.NomeCidade);
+
+            meuPaint.Color = new Android.Graphics.Color(255, 0, 0);
+            meuPaint.StrokeWidth = 10;
+            tempBitmap = BitmapFactory.DecodeResource(Resources, Resource.Drawable.mapaEspanhaPortugal);
+            tempBitmap = tempBitmap.Copy(Bitmap.Config.Argb8888, true);
+            imgMapa.Draw(tempCanvas);
+
+            tempCanvas.DrawPoint(cidade.CoordenadaX, cidade.CoordenadaY, meuPaint);
+
+            */
+            meuCanvas.DrawCircle(c.CoordenadaX*viewMapa.Height, c.CoordenadaY*viewMapa.Width, 20, meuPaint);
         }
 
         private void BuscarCaminho(string cidadeOrigem, string cidadeDestino, bool usarTempo)
         {
             grafoCidades.UsarTempo = usarTempo;
-            string[] caminho = grafoCidades.Caminho(ProcurarCidadePorNome(cidadeOrigem), ProcurarCidadePorNome(cidadeDestino));
+            caminho = grafoCidades.Caminho(ProcurarCidadePorNome(cidadeOrigem), ProcurarCidadePorNome(cidadeDestino));
 
             tvResultado.Text = "";
             if (caminho != null)
@@ -164,6 +193,42 @@ namespace apCidadesEuropa
                         tvResultado.Text += "\n" + caminho[i];
                     else
                         tvResultado.Text += "->" + caminho[i];
+            }
+        }
+
+        protected override void OnDestroy()
+        {
+            SalvarArquivoDeCidades();
+            SalvarArquivoDeCaminhos();
+        }
+
+        private void SalvarArquivoDeCidades()
+        {
+            using (StreamWriter streamWriter = new StreamWriter(Assets.Open("Cidades.txt")))
+            {
+                ListaSimples<Cidade> atual;
+                for(int i=0; i<103; i++)
+                {
+                    atual = listaCidades.getPosicao(i);
+                    if (!atual.EstaVazia)
+                    {
+                        atual.Atual = atual.Primeiro;
+                        while (atual.Atual != null)
+                        {
+                            Cidade.EscreverNoArquivo(streamWriter, atual.Atual.Info);
+                            atual.Atual = atual.Atual.Prox;
+                        }
+                    }
+                }
+                streamWriter.Close();
+            }
+        }
+
+        private void SalvarArquivoDeCaminhos()
+        {
+            using (StreamWriter streamWriter = new StreamWriter(Assets.Open("Cidades.txt")))
+            {
+                streamWriter.Close();
             }
         }
     }

@@ -49,10 +49,13 @@
                 android:id="@+id/btnBuscar"
                 android:text="Buscar"
                 android:layout_gravity="center_horizontal" />
-            <View
+          <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="388.0dp"
-                android:id="@+id/viewMapa" />
+                android:layout_height="wrap_content"
+                android:id="@+id/linearLayoutImagem">
+            
+          </LinearLayout>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -16,13 +16,13 @@ class Cidade : IComparable<Cidade>
     const int tamanhoIdCidade = 2;
     const int inicioIdCidade = 0;
     string nomeCidade;
-    const int tamanhoNomeCidade = 16;
+    const int tamanhoNomeCidade = 15;
     const int inicioNomeCidade = tamanhoIdCidade + inicioIdCidade;
     float coordenadaX;
-    const int tamanhoCoordenadaX = 5;
+    const int tamanhoCoordenadaX = 6;
     const int inicioCoordenadaX = inicioNomeCidade + tamanhoNomeCidade;
     float coordenadaY;
-    const int tamanhoCoordenadaY = 5;
+    const int tamanhoCoordenadaY = 6;
     const int inicioCoordenadaY = inicioCoordenadaX + tamanhoCoordenadaX;
 
 
@@ -51,6 +51,14 @@ class Cidade : IComparable<Cidade>
         float coordenadaX = float.Parse(linha.Substring(inicioCoordenadaX, tamanhoCoordenadaX).Trim());
         float coordenadaY = float.Parse(linha.Substring(inicioCoordenadaY, tamanhoCoordenadaY).Trim());
         return new Cidade(idCidade, nomeCidade, coordenadaX, coordenadaY);
+    }
+
+    public static void EscreverNoArquivo(StreamWriter arq, Cidade c)
+    {
+        arq.WriteLine(c.idCidade.ToString().PadLeft(tamanhoIdCidade, ' '), 
+                      c.nomeCidade.PadRight(tamanhoNomeCidade, ' '),
+                      c.coordenadaX.ToString().PadLeft(tamanhoCoordenadaX, ' '),
+                      c.coordenadaY.ToString().PadLeft(tamanhoCoordenadaY, ' '));
     }
 
     //método compareTo requisitado pela interface
