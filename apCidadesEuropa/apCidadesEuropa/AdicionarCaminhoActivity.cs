@@ -18,8 +18,8 @@ namespace apCidadesEuropa
 
         private EditText edtTempo, edtDistancia;
         private Button btnInserirCaminho;
-        private Spinner spnNovaorigem, spnNovoDestino;
-
+        private Spinner spnNovaOrigem, spnNovoDestino;
+        List<string> nomesCidades;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -29,19 +29,20 @@ namespace apCidadesEuropa
             edtDistancia = FindViewById<EditText>(Resource.Id.edtDistancia);
             edtTempo = FindViewById<EditText>(Resource.Id.edtTempo);
             btnInserirCaminho = FindViewById<Button>(Resource.Id.btnInserirCaminho);
-            spnNovaorigem = FindViewById<Spinner>(Resource.Id.spnNovaOrigem);
+            spnNovaOrigem = FindViewById<Spinner>(Resource.Id.spnNovaOrigem);
             spnNovoDestino = FindViewById<Spinner>(Resource.Id.spnNovoDestino);
+
+            nomesCidades = (List<string>)Intent.GetStringArrayListExtra("nomes");
+
+            spnNovaOrigem.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, nomesCidades);
+            spnNovoDestino.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, nomesCidades);
 
             btnInserirCaminho.Click += delegate
             {
                 CriarCaminho();
             };
         }
-
-
-
-
-
+        
         private void CriarCaminho()
         {
             if(edtDistancia.Text != "" || edtDistancia.Text != null 
@@ -56,7 +57,7 @@ namespace apCidadesEuropa
                 else
                 {
                     Intent intent = new Intent();
-                    intent.PutExtra("spnNovaOrigem", spnNovaorigem.SelectedItem.ToString());
+                    intent.PutExtra("spnNovaOrigem", spnNovaOrigem.SelectedItem.ToString());
                     intent.PutExtra("spnNovoDestibo", spnNovoDestino.SelectedItem.ToString());
                     intent.PutExtra("edtDistancia", int.Parse(edtDistancia.Text));
                     intent.PutExtra("edtTempo", int.Parse(edtTempo.Text));

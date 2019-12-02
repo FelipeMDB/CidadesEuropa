@@ -11,6 +11,7 @@ using System;
 using Android.Views;
 using Android.Runtime;
 using Android.Provider;
+using System.Collections.Generic;
 
 namespace apCidadesEuropa
 {
@@ -29,6 +30,8 @@ namespace apCidadesEuropa
         BucketHash listaCidades = new BucketHash();
         Grafo grafoCidades;
         string[] caminho;
+
+        List<string> listaNomes;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -60,7 +63,7 @@ namespace apCidadesEuropa
 
             grafoCidades = new Grafo(false);
 
-            IList listaNomes = new ArrayList();
+            listaNomes = new List<string>();
             quantasCidades = 0;
             using (StreamReader leitor = new StreamReader(Assets.Open("Cidades.txt")))
             {
@@ -90,6 +93,13 @@ namespace apCidadesEuropa
             {
                 Intent intent = new Intent(this, typeof(AdicionarCidadeActivity));
                 StartActivityForResult(intent, 0);
+            };
+
+            btnAddCaminho.Click += delegate
+            {
+                Intent intent = new Intent(this, typeof(AdicionarCaminhoActivity));
+                intent.PutStringArrayListExtra("nomes", listaNomes);
+                StartActivityForResult(intent, 1);
             };
 
         }
@@ -245,24 +255,31 @@ namespace apCidadesEuropa
 
             if (resultCode == Result.Ok)
             {
-                string nomeCidade = data.GetStringExtra("nome");
-                float coordenadaX = data.GetFloatExtra("x", 0);
-                float coordenadaY = data.GetFloatExtra("y", 0);
-
-                if (ProcurarCidadePorNome(nomeCidade) == -1)
+                if (requestCode == 0)
                 {
-                    //definimos um id automaticamente para a cidade (com base na quantidade de cidades já que o primeiro id é 0)
+                    string nomeCidade = data.GetStringExtra("nome");
+                    float coordenadaX = data.GetFloatExtra("x", 0);
+                    float coordenadaY = data.GetFloatExtra("y", 0);
 
-                    Cidade cidade = new Cidade( quantasCidades, nomeCidade, coordenadaX, coordenadaY) ;
-                    quantasCidades++;
-                    listaCidades.Insert(cidade);
+                    if (ProcurarCidadePorNome(nomeCidade) == -1)
+                    {
+                        //definimos um id automaticamente para a cidade (com base na quantidade de cidades já que o primeiro id é 0)
+
+                        Cidade cidade = new Cidade(quantasCidades, nomeCidade, coordenadaX, coordenadaY);
+                        quantasCidades++;
+                        listaCidades.Insert(cidade);
+                    }
+                    else
+                    {
+                        Toast.MakeText(ApplicationContext, "Já existe uma cidade com este nome", ToastLength.Long).Show(); ;
+                    }
+
+                    Desenhar();
                 }
-                else
+                else if(requestCode == 1)
                 {
-                    Toast.MakeText(ApplicationContext, "Já existe uma cidade com este nome", ToastLength.Long).Show(); ;
-                }
 
-                Desenhar();
+                }
 
             }
             else
