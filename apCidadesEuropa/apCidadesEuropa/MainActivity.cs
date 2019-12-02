@@ -89,7 +89,8 @@ namespace apCidadesEuropa
             {
                 Intent intent = new Intent(this, typeof(AdicionarCidadeActivity));
                 //intent.Data = (listaCidades);
-                StartActivity(intent);
+                intent.SetFlags(0);
+                StartActivityForResult(intent, 0);
             };
 
         }

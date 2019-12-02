@@ -33,13 +33,13 @@ namespace apCidadesEuropa
 
             btnAdicionarCidade.Click += delegate
             {
-                criarCidade();
+                CriarCidade();
             };
         }
 
 
 
-        public void criarCidade()
+        public void CriarCidade()
         {
             if(edtNomeCidade.Text != "" || edtNomeCidade.Text !=  null 
                 && edtXCidade.Text != "" || edtXCidade.Text != null
@@ -47,7 +47,9 @@ namespace apCidadesEuropa
             {
                 Cidade cidade = new Cidade(-1, edtNomeCidade.Text, float.Parse(edtXCidade.Text) , float.Parse(edtYCidade.Text));
                 Intent intent = new Intent();
-                intent.PutExtra("cidade", (ISerializable)cidade);
+                intent.PutExtra("nome", edtNomeCidade.Text);
+                intent.PutExtra("x", float.Parse(edtXCidade.Text));
+                intent.PutExtra("y", float.Parse(edtYCidade.Text));
                 SetResult(Result.Ok, intent);
                 Finish();
             }
