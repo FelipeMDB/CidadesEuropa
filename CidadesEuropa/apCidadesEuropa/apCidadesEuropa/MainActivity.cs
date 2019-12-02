@@ -1,28 +1,16 @@
 ﻿using Android.App;
 using Android.Widget;
 using Android.OS;
-using System.IO;
-using System;
+using Android.Graphics;
 using Android.Content.Res;
 using System.Collections;
-using Android.Views;
-using Android.Content;
-using Android.Graphics;
-using Android.Graphics.Drawables;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-using Color = System.Drawing.Color;
+using Android.Graphics.Drawables;
+using Android.Content;
 
-namespace CidadesEuropa
+namespace apCidadesEuropa
 {
-    [Activity(Label = "CidadesEuropa", MainLauncher = true)]
+    [Activity(Label = "apCidadesEuropa", MainLauncher = true)]
     public class MainActivity : Activity
     {
         Button btnBuscar, btnAddCidade, btnAddCaminho;
@@ -53,13 +41,13 @@ namespace CidadesEuropa
             meuPaint = new Paint();
             tempCanvas = new Canvas();
 
-           // MyView view = new MyView(this);
-           // LinearLayout layout = FindViewById<LinearLayout>(Resource.Id.linearLayout4);
-           // layout.AddView(view);
+            // MyView view = new MyView(this);
+            // LinearLayout layout = FindViewById<LinearLayout>(Resource.Id.linearLayout4);
+            // layout.AddView(view);
 
             grafoCidades = new Grafo(false);
             AssetManager assets = this.Assets;
-      
+
             IList listaNomes = new ArrayList();
             int quantasCidades = 0;
             using (StreamReader leitor = new StreamReader(assets.Open("Cidades.txt")))
@@ -81,7 +69,7 @@ namespace CidadesEuropa
 
                     tempCanvas.DrawPoint(cidade.CoordenadaX, cidade.CoordenadaY, meuPaint);
 
-                    BitmapDrawable bmd = new BitmapDrawable(tempCanvas);
+                    //BitmapDrawable bmd = new BitmapDrawable(tempCanvas);
 
 
                 }
@@ -89,7 +77,7 @@ namespace CidadesEuropa
 
             sOrigem.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, listaNomes);
             sDestino.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, listaNomes);
-            
+
             MontarMatriz();
 
             btnBuscar.Click += delegate
@@ -98,15 +86,13 @@ namespace CidadesEuropa
             };
 
             btnAddCidade.Click += delegate
-             {
-                 Intent intent = new Intent(this, typeof(AdicionarCidadeActivity));
-                 //intent.Data = (listaCidades);
-                 StartActivity(intent);
-             };
-
+            {
+                Intent intent = new Intent(this, typeof(AdicionarCidadeActivity));
+                //intent.Data = (listaCidades);
+                StartActivity(intent);
+            };
 
         }
-
 
         private void MontarMatriz()
         {
