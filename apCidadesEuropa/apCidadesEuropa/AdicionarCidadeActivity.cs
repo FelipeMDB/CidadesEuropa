@@ -45,7 +45,6 @@ namespace apCidadesEuropa
                 && edtXCidade.Text != "" || edtXCidade.Text != null
                 && edtYCidade.Text != "" || edtYCidade.Text != null)
             {
-                Cidade cidade = new Cidade(-1, edtNomeCidade.Text, float.Parse(edtXCidade.Text) , float.Parse(edtYCidade.Text));
                 Intent intent = new Intent();
                 intent.PutExtra("nome", edtNomeCidade.Text);
                 intent.PutExtra("x", float.Parse(edtXCidade.Text));

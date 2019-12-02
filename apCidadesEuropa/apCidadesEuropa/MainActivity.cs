@@ -10,6 +10,7 @@ using Android.Content;
 using System;
 using Android.Views;
 using Android.Runtime;
+using Android.Provider;
 
 namespace apCidadesEuropa
 {
