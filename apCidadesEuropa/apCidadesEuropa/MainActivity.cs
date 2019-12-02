@@ -88,8 +88,6 @@ namespace apCidadesEuropa
             btnAddCidade.Click += delegate
             {
                 Intent intent = new Intent(this, typeof(AdicionarCidadeActivity));
-                //intent.Data = (listaCidades);
-                intent.SetFlags(0);
                 StartActivityForResult(intent, 0);
             };
 
@@ -246,11 +244,15 @@ namespace apCidadesEuropa
 
             if (resultCode == Result.Ok)
             {
-                Cidade cidade = (Cidade)data.GetSerializableExtra("cidade");
-                if (ProcurarCidadePorNome(cidade.NomeCidade) == -1)
+                string nomeCidade = data.GetStringExtra("nome");
+                float coordenadaX = data.GetFloatExtra("x", 0);
+                float coordenadaY = data.GetFloatExtra("y", 0);
+
+                if (ProcurarCidadePorNome(nomeCidade) == -1)
                 {
                     //definimos um id automaticamente para a cidade (com base na quantidade de cidades já que o primeiro id é 0)
-                    cidade.IdCidade = quantasCidades;
+
+                    Cidade cidade = new Cidade( quantasCidades, nomeCidade, coordenadaX, coordenadaY) ;
                     quantasCidades++;
                     listaCidades.Insert(cidade);
                 }

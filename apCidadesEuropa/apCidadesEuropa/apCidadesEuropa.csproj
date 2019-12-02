@@ -54,6 +54,7 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdicionarCaminhoActivity.cs" />
     <Compile Include="AdicionarCidadeActivity.cs" />
     <Compile Include="BucketHash.cs" />
     <Compile Include="Cidade.cs" />
@@ -77,6 +78,9 @@
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\Main.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\adicionar_caminho_activity_layout.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>
