@@ -18,10 +18,10 @@ class Cidade : IComparable<Cidade>
     string nomeCidade;
     const int tamanhoNomeCidade = 16;
     const int inicioNomeCidade = tamanhoIdCidade + inicioIdCidade;
-    double coordenadaX;
+    float coordenadaX;
     const int tamanhoCoordenadaX = 5;
     const int inicioCoordenadaX = inicioNomeCidade + tamanhoNomeCidade;
-    double coordenadaY;
+    float coordenadaY;
     const int tamanhoCoordenadaY = 5;
     const int inicioCoordenadaY = inicioCoordenadaX + tamanhoCoordenadaX;
 
@@ -29,12 +29,12 @@ class Cidade : IComparable<Cidade>
     //declaração das variáveis globais da classe 
     public int IdCidade { get => idCidade; set => idCidade = value; }
     public string NomeCidade { get => nomeCidade; set => nomeCidade = value; }
-    public double CoordenadaX { get => coordenadaX; set => coordenadaX = value; }
-    public double CoordenadaY { get => coordenadaY; set => coordenadaY = value; }
+    public float CoordenadaX { get => coordenadaX; set => coordenadaX = value; }
+    public float CoordenadaY { get => coordenadaY; set => coordenadaY = value; }
 
     //construtor da classe
     //parâmetros: id da cidade, nome da cidade, coordenada x, coordenada y
-    public Cidade(int id, string nome, double x, double y)
+    public Cidade(int id, string nome, float x, float y)
     {
         idCidade = id;
         nomeCidade = nome;
@@ -48,8 +48,8 @@ class Cidade : IComparable<Cidade>
         string linha = arq.ReadLine();
         int idCidade = int.Parse(linha.Substring(inicioIdCidade, tamanhoIdCidade).Trim());
         string nomeCidade = linha.Substring(inicioNomeCidade, tamanhoNomeCidade).Trim();
-        double coordenadaX = double.Parse(linha.Substring(inicioCoordenadaX, tamanhoCoordenadaX).Trim());
-        double coordenadaY = double.Parse(linha.Substring(inicioCoordenadaY, tamanhoCoordenadaY).Trim());
+        float coordenadaX = float.Parse(linha.Substring(inicioCoordenadaX, tamanhoCoordenadaX).Trim());
+        float coordenadaY = float.Parse(linha.Substring(inicioCoordenadaY, tamanhoCoordenadaY).Trim());
         return new Cidade(idCidade, nomeCidade, coordenadaX, coordenadaY);
     }
 

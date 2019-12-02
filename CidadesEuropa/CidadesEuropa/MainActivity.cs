@@ -7,6 +7,18 @@ using Android.Content.Res;
 using System.Collections;
 using Android.Views;
 using Android.Content;
+using Android.Graphics;
+using Android.Graphics.Drawables;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+using Color = System.Drawing.Color;
 
 namespace CidadesEuropa
 {
@@ -16,6 +28,10 @@ namespace CidadesEuropa
         Button btnBuscar, btnAddCidade, btnAddCaminho;
         Spinner sOrigem, sDestino;
         TextView tvResultado;
+        Paint meuPaint;
+        Canvas tempCanvas;
+        Bitmap tempBitmap;
+        ImageView imgMapa;
 
         BucketHash listaCidades = new BucketHash();
         Grafo grafoCidades;
@@ -33,6 +49,9 @@ namespace CidadesEuropa
             tvResultado = FindViewById<TextView>(Resource.Id.tvResultado);
             btnAddCidade = FindViewById<Button>(Resource.Id.btnAddCidade);
             btnAddCaminho = FindViewById<Button>(Resource.Id.btnAddCaminho);
+            imgMapa = FindViewById<ImageView>(Resource.Id.imgMapa);
+            meuPaint = new Paint();
+            tempCanvas = new Canvas();
 
            // MyView view = new MyView(this);
            // LinearLayout layout = FindViewById<LinearLayout>(Resource.Id.linearLayout4);
@@ -53,6 +72,18 @@ namespace CidadesEuropa
                     listaNomes.Add(cidade.NomeCidade);
                     grafoCidades.NovoVertice(cidade.NomeCidade);
                     //view.DesenharCidade(cidade.CoordenadaX, cidade.CoordenadaY, cidade.NomeCidade);
+
+                    meuPaint.Color = new Android.Graphics.Color(255, 0, 0);
+                    meuPaint.StrokeWidth = 10p;
+                    //tempBitmap = BitmapFactory.DecodeResource(Resources, Resource.Drawable.mapaEspanhaPortugal);
+                    //tempBitmap = tempBitmap.Copy(Bitmap.Config.Argb8888, true);
+                    //imgMapa.Draw(tempCanvas);
+
+                    tempCanvas.DrawPoint(cidade.CoordenadaX, cidade.CoordenadaY, meuPaint);
+
+                    BitmapDrawable bmd = new BitmapDrawable(tempCanvas);
+
+
                 }
             }
 
@@ -69,10 +100,13 @@ namespace CidadesEuropa
             btnAddCidade.Click += delegate
              {
                  Intent intent = new Intent(this, typeof(AdicionarCidadeActivity));
-                 intent.Data = (listaCidades);
+                 //intent.Data = (listaCidades);
                  StartActivity(intent);
              };
+
+
         }
+
 
         private void MontarMatriz()
         {
