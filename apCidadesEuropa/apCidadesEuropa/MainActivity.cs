@@ -9,6 +9,7 @@ using Android.Graphics.Drawables;
 using Android.Content;
 using System;
 using Android.Views;
+using Android.Runtime;
 
 namespace apCidadesEuropa
 {
@@ -22,6 +23,7 @@ namespace apCidadesEuropa
         Canvas meuCanvas;
         Bitmap tempBitmap;
         View viewMapa;
+        int quantasCidades;
 
         BucketHash listaCidades = new BucketHash();
         Grafo grafoCidades;
@@ -58,7 +60,7 @@ namespace apCidadesEuropa
             grafoCidades = new Grafo(false);
 
             IList listaNomes = new ArrayList();
-            int quantasCidades = 0;
+            quantasCidades = 0;
             using (StreamReader leitor = new StreamReader(Assets.Open("Cidades.txt")))
             {
                 while (!leitor.EndOfStream)
@@ -113,6 +115,9 @@ namespace apCidadesEuropa
             }
         }
 
+
+
+        //retorna -1 caso não exista a cidade
         private int ProcurarCidadePorNome(string nome)
         {
             ListaSimples<Cidade> lista = listaCidades.getPosicao(listaCidades.Hash(nome.ToUpper()));
@@ -229,6 +234,36 @@ namespace apCidadesEuropa
             using (StreamWriter streamWriter = new StreamWriter(Assets.Open("Cidades.txt")))
             {
                 streamWriter.Close();
+            }
+        }
+
+
+        // método que recebe o intent de AdicionarCidadeActivity.cs e adiciona a cidade no BucketHash de cidades (listaCidades)
+        protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+
+            if (resultCode == Result.Ok)
+            {
+                Cidade cidade = (Cidade)data.GetSerializableExtra("cidade");
+                if (ProcurarCidadePorNome(cidade.NomeCidade) == -1)
+                {
+                    //definimos um id automaticamente para a cidade (com base na quantidade de cidades já que o primeiro id é 0)
+                    cidade.IdCidade = quantasCidades;
+                    quantasCidades++;
+                    listaCidades.Insert(cidade);
+                }
+                else
+                {
+                    Toast.MakeText(ApplicationContext, "Já existe uma cidade com este nome", ToastLength.Long).Show(); ;
+                }
+
+                Desenhar();
+
+            }
+            else
+            {
+                Toast.MakeText(ApplicationContext, "Não conseguimos inserir a cidade - ERRO INESPERADO", ToastLength.Long).Show();
             }
         }
     }
