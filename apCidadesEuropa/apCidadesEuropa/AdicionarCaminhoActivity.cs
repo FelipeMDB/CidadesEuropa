@@ -15,11 +15,61 @@ namespace apCidadesEuropa
     [Activity(Label = "AdicionarCaminhoActivity")]
     public class AdicionarCaminhoActivity : Activity
     {
+
+        private EditText edtTempo, edtDistancia;
+        private Button btnInserirCaminho;
+        private Spinner spnNovaorigem, spnNovoDestino;
+
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            SetContentView(Resource.Layout.adicionar_caminho_activity_layout);
 
-            // Create your application here
+            edtDistancia = FindViewById<EditText>(Resource.Id.edtDistancia);
+            edtTempo = FindViewById<EditText>(Resource.Id.edtTempo);
+            btnInserirCaminho = FindViewById<Button>(Resource.Id.btnInserirCaminho);
+            spnNovaorigem = FindViewById<Spinner>(Resource.Id.spnNovaOrigem);
+            spnNovoDestino = FindViewById<Spinner>(Resource.Id.spnNovoDestino);
+
+            btnInserirCaminho.Click += delegate
+            {
+                CriarCaminho();
+            };
         }
+
+
+
+
+
+        private void CriarCaminho()
+        {
+            if(edtDistancia.Text != "" || edtDistancia.Text != null 
+                && edtTempo.Text != "" || edtTempo.Text != null)
+            {
+                int distancia = 0;
+                int tempo = 0;
+                if(!int.TryParse(edtDistancia.Text, out distancia) || !int.TryParse(edtTempo.Text, out tempo) )
+                {
+                    Toast.MakeText(ApplicationContext, "Por favor digite apenas números inteiros", ToastLength.Long);
+                }
+                else
+                {
+                    Intent intent = new Intent();
+                    intent.PutExtra("spnNovaOrigem", spnNovaorigem.SelectedItem.ToString());
+                    intent.PutExtra("spnNovoDestibo", spnNovoDestino.SelectedItem.ToString());
+                    intent.PutExtra("edtDistancia", int.Parse(edtDistancia.Text));
+                    intent.PutExtra("edtTempo", int.Parse(edtTempo.Text));
+                    SetResult(Result.Ok, intent);
+                    Finish();
+                }
+            }
+            else
+            {
+                Toast.MakeText(ApplicationContext, "Preencha todos os campos", ToastLength.Short).Show();
+            }
+        }
+
+
     }
 }

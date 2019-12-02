@@ -2,4 +2,29 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:layout_height="match_parent">
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/spnNovaOrigem" />
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/spnNovoDestino" />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edtTempo"
+        android:hint="Digite o tempo" />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edtDistancia"
+        android:hint="Digite a distância" />
+    <Button
+        android:id="@+id/btnInserirCaminho"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="INSERIR"
+        android:textSize="25" />
+</LinearLayout>
