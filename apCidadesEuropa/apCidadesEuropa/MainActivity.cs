@@ -75,22 +75,19 @@ namespace apCidadesEuropa
                     tempCanvas.DrawPoint(cidade.CoordenadaX, cidade.CoordenadaY, meuPaint);
                     
                     */
-                    
 
-                    Bitmap bmp = BitmapFactory.DecodeResource(Resources, Resource.Drawable.mapaEspanhaPortugal);
                     
-                    meuPaint = new Paint();
                     meuPaint.SetARGB(255, 255, 0, 0);
-                    
-                    meuCanvas = new Canvas(bmp);
+
+                
+
+                    Bitmap workingBitmap = Bitmap.CreateBitmap(BitmapFactory.DecodeResource(Resources, Resource.Drawable.mapaEspanhaPortugal));
+                    Bitmap mutableBitmap = workingBitmap.Copy(Bitmap.Config.Argb8888, true);
+                    meuCanvas = new Canvas(mutableBitmap);
+
+                    meuCanvas.DrawCircle(cidade.CoordenadaX, cidade.CoordenadaY, 10, meuPaint);
 
                     viewMapa.Draw(meuCanvas);
-
-                    //Draw everything you want into the canvas
-                    meuCanvas.DrawCircle(50, 50, 10, meuPaint);
-
-                    //Attach the canvas to the ImageView
-
 
 
                 }
