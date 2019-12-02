@@ -49,11 +49,10 @@
                 android:id="@+id/btnBuscar"
                 android:text="Buscar"
                 android:layout_gravity="center_horizontal" />
-            <ImageView
-                android:src="@drawable/mapaespanhaportugal"
+            <View
                 android:layout_width="wrap_content"
                 android:layout_height="388.0dp"
-                android:id="@+id/imgMapa" />
+                android:id="@+id/viewMapa" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

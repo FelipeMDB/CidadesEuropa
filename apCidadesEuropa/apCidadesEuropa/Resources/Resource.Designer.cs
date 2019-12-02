@@ -81,9 +81,6 @@ namespace apCidadesEuropa
 			// aapt resource value: 0x7f050002
 			public const int edtYCidade = 2131034114;
 			
-			// aapt resource value: 0x7f05000c
-			public const int imgMapa = 2131034124;
-			
 			// aapt resource value: 0x7f050005
 			public const int linearLayout1 = 2131034117;
 			
@@ -110,6 +107,9 @@ namespace apCidadesEuropa
 			
 			// aapt resource value: 0x7f05000e
 			public const int tvResultado = 2131034126;
+			
+			// aapt resource value: 0x7f05000c
+			public const int viewMapa = 2131034124;
 			
 			static Id()
 			{

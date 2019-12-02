@@ -7,6 +7,8 @@ using System.Collections;
 using System.IO;
 using Android.Graphics.Drawables;
 using Android.Content;
+using System;
+using Android.Views;
 
 namespace apCidadesEuropa
 {
@@ -17,9 +19,9 @@ namespace apCidadesEuropa
         Spinner sOrigem, sDestino;
         TextView tvResultado;
         Paint meuPaint;
-        Canvas tempCanvas;
+        Canvas meuCanvas;
         Bitmap tempBitmap;
-        ImageView imgMapa;
+        View viewMapa;
 
         BucketHash listaCidades = new BucketHash();
         Grafo grafoCidades;
@@ -37,9 +39,9 @@ namespace apCidadesEuropa
             tvResultado = FindViewById<TextView>(Resource.Id.tvResultado);
             btnAddCidade = FindViewById<Button>(Resource.Id.btnAddCidade);
             btnAddCaminho = FindViewById<Button>(Resource.Id.btnAddCaminho);
-            imgMapa = FindViewById<ImageView>(Resource.Id.imgMapa);
+            viewMapa = FindViewById<View>(Resource.Id.viewMapa);
             meuPaint = new Paint();
-            tempCanvas = new Canvas();
+            meuCanvas = new Canvas();
 
             // MyView view = new MyView(this);
             // LinearLayout layout = FindViewById<LinearLayout>(Resource.Id.linearLayout4);
@@ -59,17 +61,36 @@ namespace apCidadesEuropa
                     quantasCidades++;
                     listaNomes.Add(cidade.NomeCidade);
                     grafoCidades.NovoVertice(cidade.NomeCidade);
-                    //view.DesenharCidade(cidade.CoordenadaX, cidade.CoordenadaY, cidade.NomeCidade);
+
+
+                    /*
+                    view.DesenharCidade(cidade.CoordenadaX, cidade.CoordenadaY, cidade.NomeCidade);
 
                     meuPaint.Color = new Android.Graphics.Color(255, 0, 0);
                     meuPaint.StrokeWidth = 10;
-                    //tempBitmap = BitmapFactory.DecodeResource(Resources, Resource.Drawable.mapaEspanhaPortugal);
-                    //tempBitmap = tempBitmap.Copy(Bitmap.Config.Argb8888, true);
-                    //imgMapa.Draw(tempCanvas);
+                    tempBitmap = BitmapFactory.DecodeResource(Resources, Resource.Drawable.mapaEspanhaPortugal);
+                    tempBitmap = tempBitmap.Copy(Bitmap.Config.Argb8888, true);
+                    imgMapa.Draw(tempCanvas);
 
                     tempCanvas.DrawPoint(cidade.CoordenadaX, cidade.CoordenadaY, meuPaint);
+                    
+                    */
+                    
 
-                    //BitmapDrawable bmd = new BitmapDrawable(tempCanvas);
+                    Bitmap bmp = BitmapFactory.DecodeResource(Resources, Resource.Drawable.mapaEspanhaPortugal);
+                    
+                    meuPaint = new Paint();
+                    meuPaint.SetARGB(255, 255, 0, 0);
+                    
+                    meuCanvas = new Canvas(bmp);
+
+                    viewMapa.Draw(meuCanvas);
+
+                    //Draw everything you want into the canvas
+                    meuCanvas.DrawCircle(50, 50, 10, meuPaint);
+
+                    //Attach the canvas to the ImageView
+
 
 
                 }
