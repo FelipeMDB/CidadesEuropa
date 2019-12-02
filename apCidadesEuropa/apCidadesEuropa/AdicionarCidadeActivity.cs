@@ -9,6 +9,7 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Java.IO;
 
 namespace apCidadesEuropa
 {
@@ -32,8 +33,28 @@ namespace apCidadesEuropa
 
             btnAdicionarCidade.Click += delegate
             {
-
+                criarCidade();
             };
+        }
+
+
+
+        public void criarCidade()
+        {
+            if(edtNomeCidade.Text != "" || edtNomeCidade.Text !=  null 
+                && edtXCidade.Text != "" || edtXCidade.Text != null
+                && edtYCidade.Text != "" || edtYCidade.Text != null)
+            {
+                Cidade cidade = new Cidade(-1, edtNomeCidade.Text, float.Parse(edtXCidade.Text) , float.Parse(edtYCidade.Text));
+                Intent intent = new Intent();
+                intent.PutExtra("cidade", (ISerializable)cidade);
+                SetResult(Result.Ok, intent);
+                Finish();
+            }
+            else
+            {
+                Toast.MakeText(ApplicationContext, "Preencha todos os campos", ToastLength.Short).Show();
+            }
         }
     }
 }
