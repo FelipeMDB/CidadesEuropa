@@ -348,7 +348,6 @@ namespace apCidadesEuropa
 
         public override void OnWindowFocusChanged(bool hasFocus)
         {
-            imgMapa = FindViewById<ImageView>(Resource.Id.imgMapa);
             Bitmap myBitmap = Bitmap.CreateBitmap(imgMapa.Width, imgMapa.Height, Bitmap.Config.Argb8888);
             meuPaint = new Paint();
             Bitmap workingBitmap = Bitmap.CreateBitmap(((BitmapDrawable)imgMapa.Drawable).Bitmap);
