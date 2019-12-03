@@ -9,13 +9,11 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:id="@+id/linearLayout1">
+            android:orientation="vertical">
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/linearLayout2">
+                android:layout_height="wrap_content">
                 <TextView
                     android:layout_width="200px"
                     android:layout_height="wrap_content"
@@ -29,8 +27,7 @@
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/linearLayout3">
+                android:layout_height="wrap_content">
                 <TextView
                     android:layout_width="200px"
                     android:layout_height="wrap_content"
@@ -48,9 +45,9 @@
                 android:text="Buscar"
                 android:layout_gravity="center_horizontal" />
             <ImageView
-                android:id="@+id/imgMapa"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:id="@+id/imgMapa" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -70,14 +67,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/btnAddCidade"
-                    android:text="+Cidade"
-                    android:layout_gravity="center_horizontal" />
+                    android:text="+Cidade" />
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/btnAddCaminho"
-                    android:text="+Caminho"
-                    android:layout_gravity="center_horizontal" />
+                    android:text="+Caminho" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
