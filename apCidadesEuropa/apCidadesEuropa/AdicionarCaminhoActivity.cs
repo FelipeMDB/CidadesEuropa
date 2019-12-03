@@ -48,8 +48,8 @@ namespace apCidadesEuropa
             if(edtDistancia.Text != "" || edtDistancia.Text != null 
                 && edtTempo.Text != "" || edtTempo.Text != null)
             {
-                int distancia = 0;
-                int tempo = 0;
+                int distancia = 0, tempo = 0;
+
                 if(!int.TryParse(edtDistancia.Text, out distancia) || !int.TryParse(edtTempo.Text, out tempo) )
                 {
                     Toast.MakeText(ApplicationContext, "Por favor digite apenas números inteiros", ToastLength.Long);
@@ -58,9 +58,9 @@ namespace apCidadesEuropa
                 {
                     Intent intent = new Intent();
                     intent.PutExtra("spnNovaOrigem", spnNovaOrigem.SelectedItem.ToString());
-                    intent.PutExtra("spnNovoDestibo", spnNovoDestino.SelectedItem.ToString());
-                    intent.PutExtra("edtDistancia", int.Parse(edtDistancia.Text));
-                    intent.PutExtra("edtTempo", int.Parse(edtTempo.Text));
+                    intent.PutExtra("spnNovoDestino", spnNovoDestino.SelectedItem.ToString());
+                    intent.PutExtra("edtDistancia", distancia);
+                    intent.PutExtra("edtTempo", tempo);
                     SetResult(Result.Ok, intent);
                     Finish();
                 }

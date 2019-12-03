@@ -22,7 +22,9 @@ class Grafo
     public int NumVerts { get => numVerts; }
 
     public int DoInicioAteAtual { get => doInicioAteAtual; }
-     
+
+    public int Infinity { get => infinity; }
+
     public Grafo(bool t)
     {
         usarTempo = t;
@@ -154,9 +156,14 @@ class Grafo
         return oCaminho;
     }
 
-    public string getRotulo(int pos)
+    public string GetRotulo(int pos)
     {
         return vertices[pos].rotulo;
+    }
+
+    public InformacoesPercurso GetInformacoesPercurso(int li, int col)
+    {
+        return adjMatrix[li, col];
     }
 
 

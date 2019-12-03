@@ -87,10 +87,6 @@ namespace apCidadesEuropa
                 intent.PutStringArrayListExtra("nomes", listaNomes);
                 StartActivityForResult(intent, 1);
             };
-
-
-
-            
         }
 
         private void MontarGrafo()
@@ -102,8 +98,8 @@ namespace apCidadesEuropa
                     string linha = leitor.ReadLine();
                     string nomeCidadeOrigem = linha.Substring(0, 15).Trim();
                     string nomeCidadeDestino = linha.Substring(15, 15).Trim();
-                    int distancia = int.Parse(linha.Substring(30, 5).Trim());
-                    int tempo = int.Parse(linha.Substring(35, 3).Trim());
+                    int distancia = int.Parse(linha.Substring(30, 4).Trim());
+                    int tempo = int.Parse(linha.Substring(34, 5).Trim());
                     int idCidadeOrigem = ProcurarIdCidadePorNome(nomeCidadeOrigem);
                     int idCidadeDestino = ProcurarIdCidadePorNome(nomeCidadeDestino);
 
@@ -149,41 +145,53 @@ namespace apCidadesEuropa
             return null;
         }
 
+        Paint meuPaint;
+        Canvas meuCanvas;
         private void Desenhar()
         {
-
-            Bitmap myBitmap = Bitmap.CreateBitmap(imgMapa.Width, imgMapa.Height, Bitmap.Config.Argb8888);
+            Bitmap myBitmap = BitmapFactory.DecodeResource(Resources, Resource.Drawable.mapaEspanhaPortugal);
+            imgMapa.SetImageBitmap(myBitmap);
+            
             meuPaint = new Paint();
-            Bitmap workingBitmap = Bitmap.CreateBitmap(((BitmapDrawable)imgMapa.Drawable).Bitmap);
-            Xscale = ((float)workingBitmap.Width / (float)imgMapa.Width);
-            meuBitmap = workingBitmap.Copy(Bitmap.Config.Argb8888, true);
-            meuCanvas = new Canvas(meuBitmap);
+            meuPaint.Color = Color.Black;
+            meuPaint.TextSize = 40;
+            Bitmap workingBitmap = myBitmap.Copy(myBitmap.GetConfig(), true);
+            meuCanvas = new Canvas(workingBitmap);
 
-            ListaSimples<Cidade> atual;
-            for(int i=0; i<103; i++)
+            for (int i = 0; i < grafoCidades.NumVerts; i++)
             {
-                atual = listaCidades.getPosicao(i);
-                if (!atual.EstaVazia)
+                Cidade c = ProcurarCidadePorNome(grafoCidades.GetRotulo(i));
+                DesenharCidade(c);
+            }
+
+            if (caminho != null)
+            {
+                meuPaint.Color = Color.Red;
+                Cidade destino = ProcurarCidadePorNome(caminho[0]);
+                Cidade origem;
+                for (int i = 1; caminho[i+1] != null; i++)
                 {
-                    atual.Atual = atual.Primeiro;
-                    while (atual.Atual != null)
-                    {
-                        DesenharCidade(atual.Atual.Info);
-                        atual.Atual = atual.Atual.Prox;
-                    }
+                    origem = destino;
+                    destino = ProcurarCidadePorNome(caminho[i]);
+                    DesenharCaminho(origem, destino);
                 }
             }
 
-            if(caminho != null)
-            {
+            imgMapa.SetImageBitmap(workingBitmap);
 
-            }
-            
         }
 
         private void DesenharCidade(Cidade c)
         {
-           
+            meuCanvas.DrawCircle(meuCanvas.Width * c.CoordenadaX, meuCanvas.Height * c.CoordenadaY, 10, meuPaint);
+            meuCanvas.DrawText(c.NomeCidade, meuCanvas.Width * c.CoordenadaX - 70, meuCanvas.Height * c.CoordenadaY - 25, meuPaint);
+        }
+
+        private void DesenharCaminho(Cidade origem, Cidade destino)
+        {
+            meuCanvas.DrawCircle(meuCanvas.Width * origem.CoordenadaX, meuCanvas.Height * origem.CoordenadaY, 10, meuPaint);
+            meuCanvas.DrawCircle(meuCanvas.Width * destino.CoordenadaX, meuCanvas.Height * destino.CoordenadaY, 10, meuPaint);
+            meuCanvas.DrawLine(meuCanvas.Width * origem.CoordenadaX, meuCanvas.Height * origem.CoordenadaY, meuCanvas.Width * destino.CoordenadaX, meuCanvas.Height * destino.CoordenadaY, meuPaint);
         }
 
         private void BuscarCaminho(string cidadeOrigem, string cidadeDestino, bool usarTempo)
@@ -206,6 +214,8 @@ namespace apCidadesEuropa
                             tvResultado.Text += "\n" + caminho[i];
                         else
                             tvResultado.Text += " -> " + caminho[i];
+
+                    Desenhar();
                 }
                 else
                     Toast.MakeText(this, "Não há caminhos possíveis entre " + cidadeOrigem + " e " + cidadeDestino, ToastLength.Short).Show();
@@ -224,7 +234,7 @@ namespace apCidadesEuropa
             {
                 for(int i=0; i<grafoCidades.NumVerts; i++)
                 {
-                    Cidade c = ProcurarCidadePorNome(grafoCidades.getRotulo(i));
+                    Cidade c = ProcurarCidadePorNome(grafoCidades.GetRotulo(i));
                     Cidade.EscreverNoArquivo(streamWriter, c);
                 }
                 streamWriter.Close();
@@ -235,6 +245,21 @@ namespace apCidadesEuropa
         {
             using (StreamWriter streamWriter = new StreamWriter(Assets.Open("Cidades.txt")))
             {
+                for (int i = 0; i < grafoCidades.NumVerts; i++)
+                {
+                    for(int j = 0; j<grafoCidades.NumVerts; j++)
+                    {
+                        InformacoesPercurso info = grafoCidades.GetInformacoesPercurso(i, j);
+                        if (info.Distancia != grafoCidades.Infinity)
+                        {
+                            streamWriter.WriteLine(grafoCidades.GetRotulo(i).PadRight(15, ' ') 
+                                                    + grafoCidades.GetRotulo(j).PadRight(15, ' ') 
+                                                    + info.Distancia.ToString().PadLeft(4, ' ') 
+                                                    + info.Tempo.ToString().PadLeft(5, ' '));
+                        }
+
+                    }
+                }
                 streamWriter.Close();
             }
         }
@@ -264,6 +289,11 @@ namespace apCidadesEuropa
                             quantasCidades++;
                             listaCidades.Insert(cidade);
                             grafoCidades.NovoVertice(cidade.NomeCidade);
+                            listaNomes.Add(cidade.NomeCidade);
+
+
+                            sOrigem.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, listaNomes);
+                            sDestino.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, listaNomes);
                         }
                         else
                         {
@@ -276,6 +306,7 @@ namespace apCidadesEuropa
                     {
                         //Toast.MakeText(ApplicationContext, "Não conseguimos recuperar as informações relacionadas à cidade", ToastLength.Long).Show();
                     }
+                    
                 }
                 else if(requestCode == 1)
                 {
@@ -306,58 +337,6 @@ namespace apCidadesEuropa
                // Toast.MakeText(ApplicationContext, "Result Code not OK", ToastLength.Short).Show();
             }
         }
-
-
-
-        Paint meuPaint;
-        Canvas meuCanvas;
-        Bitmap meuBitmap;
-        float x1;
-        float y1;
-        float x2;
-        float y2;
-        float Xscale;
-
-
-        public bool OnTouch(View v, MotionEvent e)
-        {
-            switch (e.Action)
-            {
-                case MotionEventActions.Down:
-                    x1 = e.GetX() * Xscale;
-                    y1 = e.GetY();
-                    break;
-                case MotionEventActions.Move:
-                    x2 = e.GetX() * Xscale;
-                    y2 = e.GetY();
-                    meuCanvas.DrawLine(x1, y1, x2, y2, meuPaint);
-                    imgMapa.SetImageBitmap(meuBitmap);
-                    x1 = x2;
-                    y1 = y2;
-                    break;
-                case MotionEventActions.Up:
-                    x2 = e.GetX() * Xscale;
-                    y2 = e.GetY();
-                    meuCanvas.DrawLine(x1, y1, x2, y2, meuPaint);
-                    imgMapa.SetImageBitmap(meuBitmap);
-                    x1 = x2;
-                    y1 = y2;
-                    break;
-                default:
-                    break;
-            }
-            return true;
-        }
-
-        public override void OnWindowFocusChanged(bool hasFocus)
-        {
-        }
-
-
-
-
-
-
     }
 }
 
