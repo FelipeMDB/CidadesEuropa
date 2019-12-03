@@ -115,8 +115,8 @@ namespace apCidadesEuropa
                     string nomeCidadeDestino = linha.Substring(15, 15).Trim();
                     int distancia = int.Parse(linha.Substring(30, 5).Trim());
                     int tempo = int.Parse(linha.Substring(35, 3).Trim());
-                    int idCidadeOrigem = ProcurarCidadePorNome(nomeCidadeOrigem);
-                    int idCidadeDestino = ProcurarCidadePorNome(nomeCidadeDestino);
+                    int idCidadeOrigem = ProcurarIdCidadePorNome(nomeCidadeOrigem);
+                    int idCidadeDestino = ProcurarIdCidadePorNome(nomeCidadeDestino);
 
                     grafoCidades.NovaAresta(idCidadeOrigem, idCidadeDestino, new InformacoesPercurso(distancia, tempo));
                 }
@@ -128,7 +128,7 @@ namespace apCidadesEuropa
 
 
         //retorna -1 caso não exista a cidade
-        private int ProcurarCidadePorNome(string nome)
+        private int ProcurarIdCidadePorNome(string nome)
         {
             ListaSimples<Cidade> lista = listaCidades.getPosicao(listaCidades.Hash(nome.ToUpper()));
 
@@ -142,6 +142,22 @@ namespace apCidadesEuropa
                     atual = atual.Prox;
             }
             return -1;
+        }
+
+        private Cidade ProcurarCidadePorNome(string nome)
+        {
+            ListaSimples<Cidade> lista = listaCidades.getPosicao(listaCidades.Hash(nome.ToUpper()));
+
+            NoLista<Cidade> atual = lista.Primeiro;
+
+            while (atual != null)
+            {
+                if (atual.Info.NomeCidade.Equals(nome))
+                    return atual.Info;
+                else
+                    atual = atual.Prox;
+            }
+            return null;
         }
 
         private void Desenhar()
@@ -197,17 +213,27 @@ namespace apCidadesEuropa
 
         private void BuscarCaminho(string cidadeOrigem, string cidadeDestino, bool usarTempo)
         {
-            grafoCidades.UsarTempo = usarTempo;
-            caminho = grafoCidades.Caminho(ProcurarCidadePorNome(cidadeOrigem), ProcurarCidadePorNome(cidadeDestino));
-
-            tvResultado.Text = "";
-            if (caminho != null)
+            if (cidadeDestino == cidadeOrigem)
             {
-                for (int i = 0; caminho[i] != null; i++)
-                    if (caminho[i + 1] == null)
-                        tvResultado.Text += "\n" + caminho[i];
-                    else
-                        tvResultado.Text += "->" + caminho[i];
+                Toast.MakeText(this, "A origem e o destino são os mesmos", ToastLength.Short).Show();
+            }
+            else
+            {
+                grafoCidades.UsarTempo = usarTempo;
+                caminho = grafoCidades.Caminho(ProcurarIdCidadePorNome(cidadeOrigem), ProcurarIdCidadePorNome(cidadeDestino));
+
+                tvResultado.Text = "";
+                if (caminho != null)
+                {
+                    tvResultado.Text = caminho[0];
+                    for (int i = 1; caminho[i] != null; i++)
+                        if (caminho[i + 1] == null)
+                            tvResultado.Text += "\n" + caminho[i];
+                        else
+                            tvResultado.Text += " -> " + caminho[i];
+                }
+                else
+                    Toast.MakeText(this, "Não há caminhos possíveis entre " + cidadeOrigem + " e " + cidadeDestino, ToastLength.Short).Show();
             }
         }
 
@@ -217,29 +243,20 @@ namespace apCidadesEuropa
             SalvarArquivoDeCaminhos();
         }
 
-        private void SalvarArquivoDeCidades()
+        private void SalvarArquivoDeCidades() //O método OnDestroy() chama SalvarArquivoDeCidades() para salvar as cidades eventualmente adicionadas (percorre hash de cidades inteiro)
         {
             using (StreamWriter streamWriter = new StreamWriter(Assets.Open("Cidades.txt")))
             {
-                ListaSimples<Cidade> atual;
-                for(int i=0; i<103; i++)
+                for(int i=0; i<grafoCidades.NumVerts; i++)
                 {
-                    atual = listaCidades.getPosicao(i);
-                    if (!atual.EstaVazia)
-                    {
-                        atual.Atual = atual.Primeiro;
-                        while (atual.Atual != null)
-                        {
-                            Cidade.EscreverNoArquivo(streamWriter, atual.Atual.Info);
-                            atual.Atual = atual.Atual.Prox;
-                        }
-                    }
+                    Cidade c = ProcurarCidadePorNome(grafoCidades.getRotulo(i));
+                    Cidade.EscreverNoArquivo(streamWriter, c);
                 }
                 streamWriter.Close();
             }
         }
 
-        private void SalvarArquivoDeCaminhos()
+        private void SalvarArquivoDeCaminhos() //O método OnDestroy() chama SalvarArquivoDeCaminhos() para salvar as cidades eventualmente adicionadas (percorre o grafo de cidades inteiro)
         {
             using (StreamWriter streamWriter = new StreamWriter(Assets.Open("Cidades.txt")))
             {
@@ -261,7 +278,7 @@ namespace apCidadesEuropa
                     float coordenadaX = data.GetFloatExtra("x", -1);
                     float coordenadaY = data.GetFloatExtra("y", -1);
 
-                    if (nomeCidade != null || nomeCidade != "" || coordenadaX != -1 || coordenadaY != -1)
+                    if (nomeCidade != null && nomeCidade != "" && coordenadaX != -1 && coordenadaY != -1)
                     {
 
                         if (ProcurarCidadePorNome(nomeCidade) == -1)
@@ -284,16 +301,16 @@ namespace apCidadesEuropa
                     {
                         //Toast.MakeText(ApplicationContext, "Não conseguimos recuperar as informações relacionadas à cidade", ToastLength.Long).Show();
                     }
-
-
-
+                }
+                else if(requestCode == 1)
+                {
                     string novaOrigem = data.GetStringExtra("spnNovaOrigem");
                     string novoDestino = data.GetStringExtra("spnNovoDestino");
                     int distancia = data.GetIntExtra("edtDistancia", -1);
                     int tempo = data.GetIntExtra("edtTempo", -1);
 
 
-                    if(novaOrigem != null || novoDestino != null || distancia != -1 || tempo != -1)
+                    if (novaOrigem != null && novoDestino != null && distancia != -1 && tempo != -1)
                     {
                         int idOrigem = ProcurarCidadePorNome(novaOrigem);
                         int ideDestino = ProcurarCidadePorNome(novoDestino);
@@ -306,13 +323,6 @@ namespace apCidadesEuropa
                     {
 
                     }
-
-                    
-
-                }
-                else if(requestCode == 1)
-                {
-                    Toast.MakeText(ApplicationContext, "Erro de requisição", ToastLength.Short).Show();
                 }
 
             }

@@ -19,6 +19,10 @@ class Grafo
 
     public bool UsarTempo { get => usarTempo; set => usarTempo = value; }
 
+    public int NumVerts { get => numVerts; }
+
+    public int DoInicioAteAtual { get => doInicioAteAtual; }
+     
     public Grafo(bool t)
     {
         usarTempo = t;
@@ -150,11 +154,11 @@ class Grafo
         return oCaminho;
     }
 
-    public int DoInicioAteAtual
+    public string getRotulo(int pos)
     {
-        get => doInicioAteAtual;
-        set => doInicioAteAtual = value;
+        return vertices[pos].rotulo;
     }
+
 
     /*public void ExibirVertice(int v)
     {
