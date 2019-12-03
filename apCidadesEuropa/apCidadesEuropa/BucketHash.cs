@@ -44,7 +44,7 @@ class BucketHash
         return false;
     }
 
-    public ListaSimples<Cidade> getPosicao(int hash)
+    public ListaSimples<Cidade> GetPosicao(int hash)
     {
         return data[hash];
     }

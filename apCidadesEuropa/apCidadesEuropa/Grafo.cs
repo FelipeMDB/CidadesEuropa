@@ -112,7 +112,7 @@ class Grafo
             {
                 // acessamos a distância desde o vértice atual (pode ser infinity)
                 int distanciaAtualAteMargem = adjMatrix[verticeAtual, coluna].Distancia;
-                int tempoAtualAteMargem = adjMatrix[verticeAtual, coluna].Distancia;
+                int tempoAtualAteMargem = adjMatrix[verticeAtual, coluna].Tempo;
 
                 // calculamos a distância desde inicioDoPercurso passando por vertice atual até
                 // esta saída

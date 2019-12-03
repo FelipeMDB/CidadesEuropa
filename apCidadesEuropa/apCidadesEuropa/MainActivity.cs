@@ -26,12 +26,15 @@ namespace apCidadesEuropa
         RadioButton rbDistancia, rbTempo;
         int quantasCidades;
 
-        BucketHash listaCidades = new BucketHash();
+        BucketHash bucketHashCidades;
         Grafo grafoCidades;
         string[] caminho;
 
         List<string> listaNomes;
-        string arquivo;
+        string arquivoCidades;
+        string arquivoCaminhos;
+
+        bool ehIntent;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -51,16 +54,17 @@ namespace apCidadesEuropa
             rbTempo = FindViewById<RadioButton>(Resource.Id.rbTempo);
             
             grafoCidades = new Grafo(false);
-
+            bucketHashCidades = new BucketHash();
             listaNomes = new List<string>();
             quantasCidades = 0;
+            ehIntent = false;
 
-            using (StreamReader leitor = new StreamReader(Assets.Open("Cidades.txt")))
+            using (StreamReader leitor = CriarStreamReaderCidades())
             {
                 while (!leitor.EndOfStream)
                 {
                     Cidade cidade = Cidade.LerArquivo(leitor);
-                    listaCidades.Insert(cidade);
+                    bucketHashCidades.Insert(cidade);
                     quantasCidades++;
                     listaNomes.Add(cidade.NomeCidade);
                     grafoCidades.NovoVertice(cidade.NomeCidade);
@@ -83,30 +87,40 @@ namespace apCidadesEuropa
 
             btnAddCidade.Click += delegate
             {
+                ehIntent = true;
                 Intent intent = new Intent(this, typeof(AdicionarCidadeActivity));
                 StartActivityForResult(intent, 0);
             };
 
             btnAddCaminho.Click += delegate
             {
+                ehIntent = true;
                 Intent intent = new Intent(this, typeof(AdicionarCaminhoActivity));
                 intent.PutStringArrayListExtra("nomes", listaNomes);
                 StartActivityForResult(intent, 1);
             };
         }
 
-        private StreamReader CriarStreamReader()
+        private StreamReader CriarStreamReaderCidades()
         {
             string sandbox = FilesDir.AbsolutePath;
-            arquivo = System.IO.Path.Combine(sandbox, "cidades.txt");
-            if (!File.Exists(arquivo))
+            arquivoCidades = System.IO.Path.Combine(sandbox, "Cidades.txt");
+            if (!File.Exists(arquivoCidades))
                 return new StreamReader(Assets.Open("Cidades.txt"));
-            return new StreamReader(arquivo);
+            return new StreamReader(arquivoCidades);
+        }
+        private StreamReader CriarStreamReaderCaminhos()
+        {
+            string sandbox = FilesDir.AbsolutePath;
+            arquivoCaminhos = System.IO.Path.Combine(sandbox, "GrafoTremEspanhaPortugal.txt");
+            if (!File.Exists(arquivoCaminhos))
+                return new StreamReader(Assets.Open("GrafoTremEspanhaPortugal.txt"));
+            return new StreamReader(arquivoCaminhos);
         }
 
         private void MontarGrafo()
         {
-            using (StreamReader leitor = new StreamReader(Assets.Open("GrafoTremEspanhaPortugal.txt")))
+            using (StreamReader leitor = CriarStreamReaderCaminhos())
             {
                 while (!leitor.EndOfStream)
                 {
@@ -124,13 +138,11 @@ namespace apCidadesEuropa
                 leitor.Close();
             }
         }
-
-
-
+        
         //retorna -1 caso não exista a cidade
         private int ProcurarIdCidadePorNome(string nome)
         {
-            ListaSimples<Cidade> lista = listaCidades.getPosicao(listaCidades.Hash(nome.ToUpper()));
+            ListaSimples<Cidade> lista = bucketHashCidades.GetPosicao(bucketHashCidades.Hash(nome.ToUpper()));
 
             NoLista<Cidade> atual = lista.Primeiro;
 
@@ -144,9 +156,10 @@ namespace apCidadesEuropa
             return -1;
         }
 
+        //retorna null caso não exista a cidade
         private Cidade ProcurarCidadePorNome(string nome)
         {
-            ListaSimples<Cidade> lista = listaCidades.getPosicao(listaCidades.Hash(nome.ToUpper()));
+            ListaSimples<Cidade> lista = bucketHashCidades.GetPosicao(bucketHashCidades.Hash(nome.ToUpper()));
 
             NoLista<Cidade> atual = lista.Primeiro;
 
@@ -217,7 +230,6 @@ namespace apCidadesEuropa
             }
             else
             {
-
                 grafoCidades.UsarTempo = rbTempo.Checked;
                 caminho = grafoCidades.Caminho(ProcurarIdCidadePorNome(cidadeOrigem), ProcurarIdCidadePorNome(cidadeDestino));
 
@@ -240,60 +252,12 @@ namespace apCidadesEuropa
             }
         }
 
-        protected override void OnDestroy()
-        {
-            SalvarArquivoDeCidades();
-            SalvarArquivoDeCaminhos();
-        }
-
-        private void SalvarArquivoDeCidades() //O método OnDestroy() chama SalvarArquivoDeCidades() para salvar as cidades eventualmente adicionadas (percorre hash de cidades inteiro)
-        {
-            if (!File.Exists(arquivo))
-                File.Create(arquivo);
-
-            using (StreamWriter streamWriter = new StreamWriter(arquivo))
-            {
-                for(int i=0; i<grafoCidades.NumVerts; i++)
-                {
-                    Cidade c = ProcurarCidadePorNome(grafoCidades.GetRotulo(i));
-                    Cidade.EscreverNoArquivo(streamWriter, c);
-                }
-                streamWriter.Close();
-            }
-        }
-
-        private void SalvarArquivoDeCaminhos() //O método OnDestroy() chama SalvarArquivoDeCaminhos() para salvar as cidades eventualmente adicionadas (percorre o grafo de cidades inteiro)
-        {
-            if (!File.Exists(arquivo))
-                File.Create(arquivo); 
-
-            using (StreamWriter streamWriter = new StreamWriter(arquivo))
-            {
-                for (int i = 0; i < grafoCidades.NumVerts; i++)
-                {
-                    for(int j = 0; j<grafoCidades.NumVerts; j++)
-                    {
-                        InformacoesPercurso info = grafoCidades.GetInformacoesPercurso(i, j);
-                        if (info.Distancia != grafoCidades.Infinity)
-                        {
-                            streamWriter.WriteLine(grafoCidades.GetRotulo(i).PadRight(15, ' ') 
-                                                    + grafoCidades.GetRotulo(j).PadRight(15, ' ') 
-                                                    + info.Distancia.ToString().PadLeft(4, ' ') 
-                                                    + info.Tempo.ToString().PadLeft(5, ' '));
-                        }
-
-                    }
-                }
-                streamWriter.Close();
-            }
-        }
-
-
         // método que recebe o intent de AdicionarCidadeActivity.cs e adiciona a cidade no BucketHash de cidades (listaCidades)
         protected override void OnActivityResult(int requestCode, [GeneratedEnum] Result resultCode, Intent data)
         {
             base.OnActivityResult(requestCode, resultCode, data);
-
+            
+            ehIntent = false;
             if (resultCode == Result.Ok)
             {
                 if (requestCode == 0)
@@ -311,7 +275,7 @@ namespace apCidadesEuropa
 
                             Cidade cidade = new Cidade(quantasCidades, nomeCidade, coordenadaX, coordenadaY);
                             quantasCidades++;
-                            listaCidades.Insert(cidade);
+                            bucketHashCidades.Insert(cidade);
                             grafoCidades.NovoVertice(cidade.NomeCidade);
                             listaNomes.Add(cidade.NomeCidade);
 
@@ -356,6 +320,53 @@ namespace apCidadesEuropa
 
             }
         }
+
+        protected override void OnStop()
+        {
+            if (!ehIntent)
+            {
+                SalvarArquivoDeCidades();
+                SalvarArquivoDeCaminhos();
+            }
+        }
+
+
+        private void SalvarArquivoDeCidades() //O método OnDestroy() chama SalvarArquivoDeCidades() para salvar as cidades eventualmente adicionadas (percorre hash de cidades inteiro)
+        {
+            using (StreamWriter streamWriter = new StreamWriter(arquivoCidades))
+            {
+                for (int i = 0; i < grafoCidades.NumVerts; i++)
+                {
+                    Cidade c = ProcurarCidadePorNome(grafoCidades.GetRotulo(i));
+                    Cidade.EscreverNoArquivo(streamWriter, c);
+                }
+                streamWriter.Close();
+            }
+        }
+
+        private void SalvarArquivoDeCaminhos() //O método OnDestroy() chama SalvarArquivoDeCaminhos() para salvar as cidades eventualmente adicionadas (percorre o grafo de cidades inteiro)
+        {
+            using (StreamWriter streamWriter = new StreamWriter(arquivoCaminhos))
+            {
+                for (int i = 0; i < grafoCidades.NumVerts; i++)
+                {
+                    for (int j = 0; j < grafoCidades.NumVerts; j++)
+                    {
+                        InformacoesPercurso info = grafoCidades.GetInformacoesPercurso(i, j);
+                        if (info.Distancia != grafoCidades.Infinity)
+                        {
+                            streamWriter.WriteLine(grafoCidades.GetRotulo(i).PadRight(15, ' ')
+                                                    + grafoCidades.GetRotulo(j).PadRight(15, ' ')
+                                                    + info.Distancia.ToString().PadLeft(4, ' ')
+                                                    + info.Tempo.ToString().PadLeft(5, ' '));
+                        }
+
+                    }
+                }
+                streamWriter.Close();
+            }
+        }
+
     }
 }
 
