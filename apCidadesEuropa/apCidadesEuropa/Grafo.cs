@@ -61,7 +61,7 @@ class Grafo
         {
             // anotamos no vetor percurso a distância entre o inicioDoPercurso e cada vértice
             // se não há ligação direta, o valor da distância será infinity
-            percurso[j] = new DistOriginal(inicioDoPercurso, adjMatrix[inicioDoPercurso, j]);
+            percurso[j] = new DistOriginal(inicioDoPercurso, new InformacoesPercurso(adjMatrix[inicioDoPercurso, j].Distancia, adjMatrix[inicioDoPercurso, j].Tempo));
         }
 
         for (int nTree = 0; nTree < numVerts; nTree++)
