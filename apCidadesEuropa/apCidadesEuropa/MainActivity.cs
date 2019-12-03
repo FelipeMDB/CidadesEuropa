@@ -67,7 +67,7 @@ namespace apCidadesEuropa
             sOrigem.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, listaNomes);
             sDestino.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, listaNomes);
 
-           // Desenhar();
+            Desenhar();
             MontarGrafo();
 
             btnBuscar.Click += delegate
@@ -88,6 +88,9 @@ namespace apCidadesEuropa
                 StartActivityForResult(intent, 1);
             };
 
+
+
+            
         }
 
         private void MontarGrafo()
@@ -148,13 +151,13 @@ namespace apCidadesEuropa
 
         private void Desenhar()
         {
-            meuPaint.SetARGB(0, 255, 0, 0);
 
-            //Bitmap workingBitmap = Bitmap.CreateBitmap(BitmapFactory.DecodeResource(Resources, Resource.Drawable.mapaEspanhaPortugal));
-            //Bitmap mutableBitmap = workingBitmap.Copy(Bitmap.Config.Argb8888, true);
-            meuCanvas = new Canvas();
-            meuCanvas.DrawBitmap(BitmapFactory.DecodeResource(Resources, Resource.Drawable.mapaEspanhaPortugal), 0, 0, null);
-            
+            Bitmap myBitmap = Bitmap.CreateBitmap(imgMapa.Width, imgMapa.Height, Bitmap.Config.Argb8888);
+            meuPaint = new Paint();
+            Bitmap workingBitmap = Bitmap.CreateBitmap(((BitmapDrawable)imgMapa.Drawable).Bitmap);
+            Xscale = ((float)workingBitmap.Width / (float)imgMapa.Width);
+            meuBitmap = workingBitmap.Copy(Bitmap.Config.Argb8888, true);
+            meuCanvas = new Canvas(meuBitmap);
 
             ListaSimples<Cidade> atual;
             for(int i=0; i<103; i++)
@@ -348,12 +351,6 @@ namespace apCidadesEuropa
 
         public override void OnWindowFocusChanged(bool hasFocus)
         {
-            Bitmap myBitmap = Bitmap.CreateBitmap(imgMapa.Width, imgMapa.Height, Bitmap.Config.Argb8888);
-            meuPaint = new Paint();
-            Bitmap workingBitmap = Bitmap.CreateBitmap(((BitmapDrawable)imgMapa.Drawable).Bitmap);
-            Xscale = ((float)workingBitmap.Width / (float)imgMapa.Width);
-            meuBitmap = workingBitmap.Copy(Bitmap.Config.Argb8888, true);
-            meuCanvas = new Canvas(meuBitmap);
         }
 
 
