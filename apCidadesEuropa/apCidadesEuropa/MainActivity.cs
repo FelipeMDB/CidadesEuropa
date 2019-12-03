@@ -23,6 +23,7 @@ namespace apCidadesEuropa
         Spinner sOrigem, sDestino;
         TextView tvResultado;
         ImageView imgMapa;
+        RadioButton rbDistancia, rbTempo;
         int quantasCidades;
 
         BucketHash listaCidades = new BucketHash();
@@ -46,13 +47,15 @@ namespace apCidadesEuropa
             btnAddCidade = FindViewById<Button>(Resource.Id.btnAddCidade);
             btnAddCaminho = FindViewById<Button>(Resource.Id.btnAddCaminho);
             imgMapa = FindViewById<ImageView>(Resource.Id.imgMapa);
+            rbDistancia = FindViewById<RadioButton>(Resource.Id.rbDistancia);
+            rbTempo = FindViewById<RadioButton>(Resource.Id.rbTempo);
             
             grafoCidades = new Grafo(false);
 
             listaNomes = new List<string>();
             quantasCidades = 0;
-            
-            using (StreamReader leitor = CriarStreamReader())
+
+            using (StreamReader leitor = new StreamReader(Assets.Open("Cidades.txt")))
             {
                 while (!leitor.EndOfStream)
                 {
@@ -181,7 +184,7 @@ namespace apCidadesEuropa
                 meuPaint.Color = Color.Red;
                 Cidade destino = ProcurarCidadePorNome(caminho[0]);
                 Cidade origem;
-                for (int i = 1; caminho[i+1] != null; i++)
+                for (int i = 1; caminho[i+2] != null; i++)
                 {
                     origem = destino;
                     destino = ProcurarCidadePorNome(caminho[i]);
@@ -214,7 +217,8 @@ namespace apCidadesEuropa
             }
             else
             {
-                grafoCidades.UsarTempo = usarTempo;
+
+                grafoCidades.UsarTempo = rbTempo.Checked;
                 caminho = grafoCidades.Caminho(ProcurarIdCidadePorNome(cidadeOrigem), ProcurarIdCidadePorNome(cidadeDestino));
 
                 tvResultado.Text = "";
@@ -223,7 +227,9 @@ namespace apCidadesEuropa
                     tvResultado.Text = caminho[0];
                     for (int i = 1; caminho[i] != null; i++)
                         if (caminho[i + 1] == null)
-                            tvResultado.Text += "\n" + caminho[i];
+                            tvResultado.Text += "\n" + caminho[i] + "min";
+                        else if (caminho[i + 2] == null)
+                            tvResultado.Text += "\n" + caminho[i] + "km";
                         else
                             tvResultado.Text += " -> " + caminho[i];
 
@@ -314,16 +320,12 @@ namespace apCidadesEuropa
                             sDestino.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, listaNomes);
                         }
                         else
-                        {
-                            Toast.MakeText(ApplicationContext, "Já existe uma cidade com este nome", ToastLength.Long).Show(); ;
-                        }
+                            Toast.MakeText(ApplicationContext, "Já existe uma cidade com este nome", ToastLength.Long).Show(); 
 
                         Desenhar();
                     }
                     else
-                    {
                         Toast.MakeText(ApplicationContext, "Não conseguimos recuperar as informações relacionadas à cidade", ToastLength.Long).Show();
-                    }
                     
                 }
                 else if(requestCode == 1)
@@ -337,22 +339,21 @@ namespace apCidadesEuropa
                     if (novaOrigem != null && novoDestino != null && distancia != -1 && tempo != -1)
                     {
                         int idOrigem = ProcurarIdCidadePorNome(novaOrigem);
-                        int ideDestino = ProcurarIdCidadePorNome(novoDestino);
+                        int idDestino = ProcurarIdCidadePorNome(novoDestino);
 
+                        if(grafoCidades.GetInformacoesPercurso(idOrigem, idDestino).Tempo == grafoCidades.Infinity)
+                        {
+                            InformacoesPercurso info = new InformacoesPercurso(distancia, tempo);
+                            grafoCidades.NovaAresta(idOrigem, idDestino, info);
+                        }
+                        else
+                            Toast.MakeText(ApplicationContext, "O caminho que você tentou adicionar já existe", ToastLength.Long).Show();
 
-                        InformacoesPercurso info = new InformacoesPercurso(distancia, tempo);
-                        grafoCidades.NovaAresta(idOrigem, ideDestino, info);
                     }
                     else
-                    {
                         Toast.MakeText(ApplicationContext, "Não conseguimos recuperar as informações relacionadas ao caminho", ToastLength.Long).Show();
-                    }
                 }
 
-            }
-            else
-            {
-                Toast.MakeText(ApplicationContext, "Ocorreu um erro inesperado", ToastLength.Short).Show();
             }
         }
     }

@@ -17,6 +17,7 @@
                 <TextView
                     android:layout_width="200px"
                     android:layout_height="wrap_content"
+                    android:textSize="40px"
                     android:text="De: "
                     android:id="@+id/textView1" />
                 <Spinner
@@ -30,6 +31,7 @@
                 android:layout_height="wrap_content">
                 <TextView
                     android:layout_width="200px"
+                    android:textSize="40px"
                     android:layout_height="wrap_content"
                     android:text="Para: "
                     android:id="@+id/textView2" />
@@ -38,41 +40,74 @@
                     android:layout_height="match_parent"
                     android:id="@+id/spinnerDestino" />
             </LinearLayout>
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/radioGroup1"
+                android:layout_marginTop="30px">
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Por distância"
+                    android:id="@+id/rbDistancia" />
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Por tempo"
+                    android:id="@+id/rbTempo" />
+            </RadioGroup>
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/btnBuscar"
                 android:text="Buscar"
-                android:layout_gravity="center_horizontal" />
+                android:textSize="50px"
+                android:layout_marginTop="40px"
+                android:layout_gravity="center_horizontal"
+                android:backgroundTint="@android:color/holo_red_dark" />
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/imgMapa" />
+                android:id="@+id/imgMapa"
+                android:padding="0px"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:text="Resultados: "
+                android:textSize="70px"
                 android:id="@+id/textView3" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="center_horizontal"
+                android:textSize="50px"
                 android:id="@+id/tvResultado" />
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="200px"
+                android:layout_marginBottom="100px">
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/btnAddCidade"
-                    android:text="+Cidade" />
+                    android:text="+Cidade"
+                    android:textSize="50px"
+                    android:layout_marginLeft="10px"
+                    android:textColor="@android:color/black"
+                    android:backgroundTint="@android:color/background_light" />
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/btnAddCaminho"
-                    android:text="+Caminho" />
+                    android:text="+Caminho"
+                    android:textSize="50px"
+                    android:layout_marginLeft="10px"
+                    android:textColor="@android:color/black"
+                    android:backgroundTint="@android:color/background_light" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

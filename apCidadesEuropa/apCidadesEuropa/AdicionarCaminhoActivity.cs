@@ -45,30 +45,33 @@ namespace apCidadesEuropa
         
         private void CriarCaminho()
         {
-            if(edtDistancia.Text != "" || edtDistancia.Text != null 
-                && edtTempo.Text != "" || edtTempo.Text != null)
+            if(edtDistancia.Text != "" && edtDistancia.Text != null 
+                && edtTempo.Text != "" && edtTempo.Text != null)
             {
                 int distancia = 0, tempo = 0;
 
                 if(!int.TryParse(edtDistancia.Text, out distancia) || !int.TryParse(edtTempo.Text, out tempo) )
                 {
-                    Toast.MakeText(ApplicationContext, "Por favor digite apenas números inteiros", ToastLength.Long);
+                    Toast.MakeText(this, "Por favor digite apenas números inteiros", ToastLength.Long).Show();
                 }
                 else
                 {
-                    Intent intent = new Intent();
-                    intent.PutExtra("spnNovaOrigem", spnNovaOrigem.SelectedItem.ToString());
-                    intent.PutExtra("spnNovoDestino", spnNovoDestino.SelectedItem.ToString());
-                    intent.PutExtra("edtDistancia", distancia);
-                    intent.PutExtra("edtTempo", tempo);
-                    SetResult(Result.Ok, intent);
-                    Finish();
+                    if (spnNovaOrigem.SelectedItem.ToString() == spnNovoDestino.SelectedItem.ToString())
+                        Toast.MakeText(this, "Por favor selecione cidades diferentes para o caminho", ToastLength.Long).Show();
+                    else
+                    {
+                        Intent intent = new Intent();
+                        intent.PutExtra("spnNovaOrigem", spnNovaOrigem.SelectedItem.ToString());
+                        intent.PutExtra("spnNovoDestino", spnNovoDestino.SelectedItem.ToString());
+                        intent.PutExtra("edtDistancia", distancia);
+                        intent.PutExtra("edtTempo", tempo);
+                        SetResult(Result.Ok, intent);
+                        Finish();
+                    }
                 }
             }
             else
-            {
-                Toast.MakeText(ApplicationContext, "Preencha todos os campos", ToastLength.Short).Show();
-            }
+                Toast.MakeText(this, "Preencha todos os campos", ToastLength.Short).Show();
         }
 
 

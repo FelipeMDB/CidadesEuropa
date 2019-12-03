@@ -1,12 +1,12 @@
-﻿class DistOriginal
+﻿using apCidadesEuropa;
+
+class DistOriginal
 {
-    public int distancia;
-    public int tempo;
+    public InformacoesPercurso peso;
     public int verticePai;
-    public DistOriginal(int vp, int d, int t)
+    public DistOriginal(int vp, InformacoesPercurso i)
     {
-        tempo = t;
-        distancia = d;
+        peso = i;
         verticePai = vp;
     }
 }
