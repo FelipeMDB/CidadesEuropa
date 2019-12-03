@@ -12,6 +12,7 @@ using Android.Views;
 using Android.Runtime;
 using Android.Provider;
 using System.Collections.Generic;
+using static Android.Views.View;
 
 namespace apCidadesEuropa
 {
@@ -21,10 +22,7 @@ namespace apCidadesEuropa
         Button btnBuscar, btnAddCidade, btnAddCaminho;
         Spinner sOrigem, sDestino;
         TextView tvResultado;
-        Paint meuPaint;
-        Canvas meuCanvas;
-        Bitmap tempBitmap;
-        View viewMapa;
+        ImageView imgMapa;
         int quantasCidades;
 
         BucketHash listaCidades = new BucketHash();
@@ -46,9 +44,7 @@ namespace apCidadesEuropa
             tvResultado = FindViewById<TextView>(Resource.Id.tvResultado);
             btnAddCidade = FindViewById<Button>(Resource.Id.btnAddCidade);
             btnAddCaminho = FindViewById<Button>(Resource.Id.btnAddCaminho);
-           // viewMapa = FindViewById<View>(Resource.Id.viewMapa);
-            meuPaint = new Paint();
-            meuCanvas = new Canvas();
+            imgMapa = FindViewById<ImageView>(Resource.Id.imgMapa);
             
             grafoCidades = new Grafo(false);
 
@@ -179,26 +175,12 @@ namespace apCidadesEuropa
             {
 
             }
-
-
-            //viewMapa.Draw(meuCanvas);
+            
         }
 
         private void DesenharCidade(Cidade c)
         {
-            /*
-            view.DesenharCidade(cidade.CoordenadaX, cidade.CoordenadaY, cidade.NomeCidade);
-
-            meuPaint.Color = new Android.Graphics.Color(255, 0, 0);
-            meuPaint.StrokeWidth = 10;
-            tempBitmap = BitmapFactory.DecodeResource(Resources, Resource.Drawable.mapaEspanhaPortugal);
-            tempBitmap = tempBitmap.Copy(Bitmap.Config.Argb8888, true);
-            imgMapa.Draw(tempCanvas);
-
-            tempCanvas.DrawPoint(cidade.CoordenadaX, cidade.CoordenadaY, meuPaint);
-
-            */
-            //.DrawCircle(c.CoordenadaX*viewMapa.Height, c.CoordenadaY*viewMapa.Width, 20, meuPaint);
+           
         }
 
         private void BuscarCaminho(string cidadeOrigem, string cidadeDestino, bool usarTempo)
@@ -324,6 +306,56 @@ namespace apCidadesEuropa
 
 
 
+        Paint meuPaint;
+        Canvas meuCanvas;
+        Bitmap meuBitmap;
+        float x1;
+        float y1;
+        float x2;
+        float y2;
+        float Xscale;
+
+
+        public bool OnTouch(View v, MotionEvent e)
+        {
+            switch (e.Action)
+            {
+                case MotionEventActions.Down:
+                    x1 = e.GetX() * Xscale;
+                    y1 = e.GetY();
+                    break;
+                case MotionEventActions.Move:
+                    x2 = e.GetX() * Xscale;
+                    y2 = e.GetY();
+                    meuCanvas.DrawLine(x1, y1, x2, y2, meuPaint);
+                    imgMapa.SetImageBitmap(meuBitmap);
+                    x1 = x2;
+                    y1 = y2;
+                    break;
+                case MotionEventActions.Up:
+                    x2 = e.GetX() * Xscale;
+                    y2 = e.GetY();
+                    meuCanvas.DrawLine(x1, y1, x2, y2, meuPaint);
+                    imgMapa.SetImageBitmap(meuBitmap);
+                    x1 = x2;
+                    y1 = y2;
+                    break;
+                default:
+                    break;
+            }
+            return true;
+        }
+
+        public override void OnWindowFocusChanged(bool hasFocus)
+        {
+            imgMapa = FindViewById<ImageView>(Resource.Id.imgMapa);
+            Bitmap myBitmap = Bitmap.CreateBitmap(imgMapa.Width, imgMapa.Height, Bitmap.Config.Argb8888);
+            meuPaint = new Paint();
+            Bitmap workingBitmap = Bitmap.CreateBitmap(((BitmapDrawable)imgMapa.Drawable).Bitmap);
+            Xscale = ((float)workingBitmap.Width / (float)imgMapa.Width);
+            meuBitmap = workingBitmap.Copy(Bitmap.Config.Argb8888, true);
+            meuCanvas = new Canvas(meuBitmap);
+        }
 
 
 
