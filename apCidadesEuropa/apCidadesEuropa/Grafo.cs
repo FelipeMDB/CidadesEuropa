@@ -14,15 +14,14 @@ class Grafo
     DistOriginal[] percurso;
     int infinity = 1000000;
     int verticeAtual;   // global usada para indicar o vértice atualmente sendo visitado 
-    int DistanciaDoInicioAteAtual;   // global usada para ajustar menor caminho com Djikstra
-    int TempoDoInicioAteAtual;   // global usada para ajustar menor caminho com Djikstra
+    int doInicioAteAtual;   // global usada para ajustar menor caminho com Djikstra
     int nTree;
 
     public bool UsarTempo { get => usarTempo; set => usarTempo = value; }
 
     public int NumVerts { get => numVerts; }
 
-    public int DoInicioAteAtual { get => DistanciaDoInicioAteAtual; }
+    public int DoInicioAteAtual { get => DoInicioAteAtual; }
 
     public int Infinity { get => infinity; }
 
@@ -73,8 +72,10 @@ class Grafo
             // o vértice com a menor distância passa a ser o vértice atual
             // para compararmos com a distância calculada em AjustarMenorCaminho()
             verticeAtual = indiceDoMenor;
-            DistanciaDoInicioAteAtual = percurso[indiceDoMenor].peso.Distancia;
-            TempoDoInicioAteAtual = percurso[indiceDoMenor].peso.Tempo;
+            if(UsarTempo)
+                doInicioAteAtual = percurso[indiceDoMenor].peso.Tempo;
+            else
+                doInicioAteAtual = percurso[indiceDoMenor].peso.Distancia;
 
             // visitamos o vértice com a menor distância desde o inicioDoPercurso
             vertices[verticeAtual].foiVisitado = true;
@@ -96,6 +97,7 @@ class Grafo
                 pesoAtual = percurso[j].peso.Tempo;
             else
                 pesoAtual = percurso[j].peso.Distancia;
+
             if (!(vertices[j].foiVisitado) && (pesoAtual < pesoMinimo))
             {
                 pesoMinimo = pesoAtual;
@@ -111,13 +113,16 @@ class Grafo
             if (!vertices[coluna].foiVisitado)       // para cada vértice ainda não visitado
             {
                 // acessamos a distância desde o vértice atual (pode ser infinity)
-                int distanciaAtualAteMargem = adjMatrix[verticeAtual, coluna].Distancia;
-                int tempoAtualAteMargem = adjMatrix[verticeAtual, coluna].Tempo;
+                int atualAteMargem;
+                if(UsarTempo)
+                    atualAteMargem = adjMatrix[verticeAtual, coluna].Tempo;
+                else
+                    atualAteMargem = adjMatrix[verticeAtual, coluna].Distancia;
 
                 // calculamos a distância desde inicioDoPercurso passando por vertice atual até
                 // esta saída
-                int distanciaDoInicioAteMargem = DistanciaDoInicioAteAtual + distanciaAtualAteMargem;
-                int tempoDoInicioAteMargem = TempoDoInicioAteAtual + tempoAtualAteMargem;
+                
+                int doInicioAteMargem = doInicioAteAtual + atualAteMargem;
 
                 // quando encontra uma distância menor, marca o vértice a partir do
                 // qual chegamos no vértice de índice coluna, e a soma da distância
@@ -125,15 +130,17 @@ class Grafo
 
                 bool ehMenor; 
                 if (UsarTempo)
-                    ehMenor = tempoDoInicioAteMargem < percurso[coluna].peso.Tempo;
+                    ehMenor = doInicioAteMargem < percurso[coluna].peso.Tempo;
                 else
-                    ehMenor = distanciaDoInicioAteMargem < percurso[coluna].peso.Distancia;
+                    ehMenor = doInicioAteMargem < percurso[coluna].peso.Distancia;
                 
                 if (ehMenor)
                 {
                     percurso[coluna].verticePai = verticeAtual;
-                    percurso[coluna].peso.Distancia = distanciaDoInicioAteMargem;
-                    percurso[coluna].peso.Tempo = tempoDoInicioAteMargem;
+                    if(UsarTempo)
+                        percurso[coluna].peso.Tempo = doInicioAteMargem;
+                    else
+                        percurso[coluna].peso.Distancia = doInicioAteMargem;
                 }
             }
     }
@@ -165,9 +172,7 @@ class Grafo
             return null;
         else
             oCaminho[contador] = vertices[finalDoPercurso].rotulo;
-
-        oCaminho[contador + 1] = percurso[finalDoPercurso].peso.Distancia + "";
-        oCaminho[contador + 2] = percurso[finalDoPercurso].peso.Tempo + "";
+        
         return oCaminho;
     }
 
@@ -181,6 +186,7 @@ class Grafo
         return adjMatrix[li, col];
     }
 
+    public InformacoesPercurso this[int o, int d] { get => adjMatrix[o, d]; }
 
     /*public void ExibirVertice(int v)
     {

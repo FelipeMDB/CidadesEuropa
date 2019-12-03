@@ -194,15 +194,22 @@ namespace apCidadesEuropa
 
             if (caminho != null)
             {
+                tvResultado.Text = caminho[0];
+                int distancia = 0, tempo = 0;
                 meuPaint.Color = Color.Red;
                 Cidade destino = ProcurarCidadePorNome(caminho[0]);
                 Cidade origem;
-                for (int i = 1; caminho[i+2] != null; i++)
+                for (int i = 1; caminho[i] != null; i++)
                 {
+                    tvResultado.Text += " -> " + caminho[i];
                     origem = destino;
                     destino = ProcurarCidadePorNome(caminho[i]);
+                    distancia += grafoCidades[origem.IdCidade, destino.IdCidade].Distancia;
+                    tempo += grafoCidades[origem.IdCidade, destino.IdCidade].Tempo;
                     DesenharCaminho(origem, destino);
                 }
+                tvResultado.Text += "\n" + distancia + "km";
+                tvResultado.Text += "\n" + tempo + "min";
             }
 
             imgMapa.SetImageBitmap(workingBitmap);
@@ -235,18 +242,7 @@ namespace apCidadesEuropa
 
                 tvResultado.Text = "";
                 if (caminho != null)
-                {
-                    tvResultado.Text = caminho[0];
-                    for (int i = 1; caminho[i] != null; i++)
-                        if (caminho[i + 1] == null)
-                            tvResultado.Text += "\n" + caminho[i] + "min";
-                        else if (caminho[i + 2] == null)
-                            tvResultado.Text += "\n" + caminho[i] + "km";
-                        else
-                            tvResultado.Text += " -> " + caminho[i];
-
                     Desenhar();
-                }
                 else
                     Toast.MakeText(this, "Não há caminhos possíveis entre " + cidadeOrigem + " e " + cidadeDestino, ToastLength.Short).Show();
             }
@@ -305,7 +301,7 @@ namespace apCidadesEuropa
                         int idOrigem = ProcurarIdCidadePorNome(novaOrigem);
                         int idDestino = ProcurarIdCidadePorNome(novoDestino);
 
-                        if(grafoCidades.GetInformacoesPercurso(idOrigem, idDestino).Tempo == grafoCidades.Infinity)
+                        if(grafoCidades[idOrigem, idDestino].Tempo == grafoCidades.Infinity)
                         {
                             InformacoesPercurso info = new InformacoesPercurso(distancia, tempo);
                             grafoCidades.NovaAresta(idOrigem, idDestino, info);
@@ -352,7 +348,7 @@ namespace apCidadesEuropa
                 {
                     for (int j = 0; j < grafoCidades.NumVerts; j++)
                     {
-                        InformacoesPercurso info = grafoCidades.GetInformacoesPercurso(i, j);
+                        InformacoesPercurso info = grafoCidades[i, j];
                         if (info.Distancia != grafoCidades.Infinity)
                         {
                             streamWriter.WriteLine(grafoCidades.GetRotulo(i).PadRight(15, ' ')
