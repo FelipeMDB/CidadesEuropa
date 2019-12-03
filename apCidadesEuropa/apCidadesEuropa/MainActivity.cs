@@ -281,7 +281,7 @@ namespace apCidadesEuropa
                     if (nomeCidade != null && nomeCidade != "" && coordenadaX != -1 && coordenadaY != -1)
                     {
 
-                        if (ProcurarCidadePorNome(nomeCidade) == -1)
+                        if (ProcurarIdCidadePorNome(nomeCidade) == -1)
                         {
                             //definimos um id automaticamente para a cidade (com base na quantidade de cidades já que o primeiro id é 0)
 
@@ -312,8 +312,8 @@ namespace apCidadesEuropa
 
                     if (novaOrigem != null && novoDestino != null && distancia != -1 && tempo != -1)
                     {
-                        int idOrigem = ProcurarCidadePorNome(novaOrigem);
-                        int ideDestino = ProcurarCidadePorNome(novoDestino);
+                        int idOrigem = ProcurarIdCidadePorNome(novaOrigem);
+                        int ideDestino = ProcurarIdCidadePorNome(novoDestino);
 
 
                         InformacoesPercurso info = new InformacoesPercurso(distancia, tempo);
