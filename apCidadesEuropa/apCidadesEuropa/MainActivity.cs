@@ -258,33 +258,67 @@ namespace apCidadesEuropa
                 if (requestCode == 0)
                 {
                     string nomeCidade = data.GetStringExtra("nome");
-                    float coordenadaX = data.GetFloatExtra("x", 0);
-                    float coordenadaY = data.GetFloatExtra("y", 0);
+                    float coordenadaX = data.GetFloatExtra("x", -1);
+                    float coordenadaY = data.GetFloatExtra("y", -1);
 
-                    if (ProcurarCidadePorNome(nomeCidade) == -1)
+                    if (nomeCidade != null || nomeCidade != "" || coordenadaX != -1 || coordenadaY != -1)
                     {
-                        //definimos um id automaticamente para a cidade (com base na quantidade de cidades já que o primeiro id é 0)
 
-                        Cidade cidade = new Cidade(quantasCidades, nomeCidade, coordenadaX, coordenadaY);
-                        quantasCidades++;
-                        listaCidades.Insert(cidade);
+                        if (ProcurarCidadePorNome(nomeCidade) == -1)
+                        {
+                            //definimos um id automaticamente para a cidade (com base na quantidade de cidades já que o primeiro id é 0)
+
+                            Cidade cidade = new Cidade(quantasCidades, nomeCidade, coordenadaX, coordenadaY);
+                            quantasCidades++;
+                            listaCidades.Insert(cidade);
+                            grafoCidades.NovoVertice(cidade.NomeCidade);
+                        }
+                        else
+                        {
+                            Toast.MakeText(ApplicationContext, "Já existe uma cidade com este nome", ToastLength.Long).Show(); ;
+                        }
+
+                        Desenhar();
                     }
                     else
                     {
-                        Toast.MakeText(ApplicationContext, "Já existe uma cidade com este nome", ToastLength.Long).Show(); ;
+                        //Toast.MakeText(ApplicationContext, "Não conseguimos recuperar as informações relacionadas à cidade", ToastLength.Long).Show();
                     }
 
-                    Desenhar();
+
+
+                    string novaOrigem = data.GetStringExtra("spnNovaOrigem");
+                    string novoDestino = data.GetStringExtra("spnNovoDestino");
+                    int distancia = data.GetIntExtra("edtDistancia", -1);
+                    int tempo = data.GetIntExtra("edtTempo", -1);
+
+
+                    if(novaOrigem != null || novoDestino != null || distancia != -1 || tempo != -1)
+                    {
+                        int idOrigem = ProcurarCidadePorNome(novaOrigem);
+                        int ideDestino = ProcurarCidadePorNome(novoDestino);
+
+
+                        InformacoesPercurso info = new InformacoesPercurso(distancia, tempo);
+                        grafoCidades.NovaAresta(idOrigem, ideDestino, info);
+                    }
+                    else
+                    {
+
+                    }
+
+                    
+
                 }
                 else if(requestCode == 1)
                 {
-
+                    Toast.MakeText(ApplicationContext, "Erro de requisição", ToastLength.Short).Show();
                 }
 
             }
             else
             {
-                Toast.MakeText(ApplicationContext, "Não conseguimos inserir a cidade - ERRO INESPERADO", ToastLength.Long).Show();
+               // Toast.MakeText(ApplicationContext, "Result Code not OK", ToastLength.Short).Show();
             }
         }
     }

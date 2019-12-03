@@ -45,12 +45,23 @@ namespace apCidadesEuropa
                 && edtXCidade.Text != "" || edtXCidade.Text != null
                 && edtYCidade.Text != "" || edtYCidade.Text != null)
             {
-                Intent intent = new Intent();
-                intent.PutExtra("nome", edtNomeCidade.Text);
-                intent.PutExtra("x", float.Parse(edtXCidade.Text));
-                intent.PutExtra("y", float.Parse(edtYCidade.Text));
-                SetResult(Result.Ok, intent);
-                Finish();
+
+                float xTeste = 0;float yTeste = 0;
+
+                if (!float.TryParse(edtXCidade.Text, out xTeste) || !float.TryParse(edtYCidade.Text, out yTeste))
+                {
+                    Toast.MakeText(ApplicationContext, "Por favor digite apenas números com até duas casas decimais nos campos de coordenadas", ToastLength.Long).Show();
+                }
+                else
+                {
+
+                    Intent intent = new Intent();
+                    intent.PutExtra("nome", edtNomeCidade.Text);
+                    intent.PutExtra("x", float.Parse(edtXCidade.Text));
+                    intent.PutExtra("y", float.Parse(edtYCidade.Text));
+                    SetResult(Result.Ok, intent);
+                    Finish();
+                }
             }
             else
             {
