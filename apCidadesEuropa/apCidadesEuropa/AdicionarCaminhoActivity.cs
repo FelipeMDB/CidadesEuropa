@@ -32,7 +32,7 @@ namespace apCidadesEuropa
             spnNovaOrigem = FindViewById<Spinner>(Resource.Id.spnNovaOrigem);
             spnNovoDestino = FindViewById<Spinner>(Resource.Id.spnNovoDestino);
 
-            nomesCidades = (List<string>)Intent.GetStringArrayListExtra("nomes");
+            nomesCidades = Intent.GetStringArrayListExtra("nomes").ToList();
 
             spnNovaOrigem.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, nomesCidades);
             spnNovoDestino.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, nomesCidades);

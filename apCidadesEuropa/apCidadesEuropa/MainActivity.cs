@@ -175,7 +175,7 @@ namespace apCidadesEuropa
             }
 
 
-            viewMapa.Draw(meuCanvas);
+            //viewMapa.Draw(meuCanvas);
         }
 
         private void DesenharCidade(Cidade c)
@@ -192,7 +192,7 @@ namespace apCidadesEuropa
             tempCanvas.DrawPoint(cidade.CoordenadaX, cidade.CoordenadaY, meuPaint);
 
             */
-            meuCanvas.DrawCircle(c.CoordenadaX*viewMapa.Height, c.CoordenadaY*viewMapa.Width, 20, meuPaint);
+            //.DrawCircle(c.CoordenadaX*viewMapa.Height, c.CoordenadaY*viewMapa.Width, 20, meuPaint);
         }
 
         private void BuscarCaminho(string cidadeOrigem, string cidadeDestino, bool usarTempo)
