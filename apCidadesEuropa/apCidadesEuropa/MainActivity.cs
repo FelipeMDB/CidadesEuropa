@@ -49,18 +49,7 @@ namespace apCidadesEuropa
            // viewMapa = FindViewById<View>(Resource.Id.viewMapa);
             meuPaint = new Paint();
             meuCanvas = new Canvas();
-
-            try
-            {
-                MyView view = new MyView(this);
-                LinearLayout layout = FindViewById<LinearLayout>(Resource.Id.linearLayoutImagem);
-                layout.AddView(view);
-            }
-            catch (Exception err)
-            {
-                Toast.MakeText(this, err.Message, ToastLength.Long).Show();
-            }
-
+            
             grafoCidades = new Grafo(false);
 
             listaNomes = new List<string>();
@@ -75,6 +64,7 @@ namespace apCidadesEuropa
                     listaNomes.Add(cidade.NomeCidade);
                     grafoCidades.NovoVertice(cidade.NomeCidade);
                 }
+
                 leitor.Close();
             }
 
