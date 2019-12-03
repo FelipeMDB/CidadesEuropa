@@ -30,6 +30,7 @@ namespace apCidadesEuropa
         string[] caminho;
 
         List<string> listaNomes;
+        string arquivo;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -50,7 +51,8 @@ namespace apCidadesEuropa
 
             listaNomes = new List<string>();
             quantasCidades = 0;
-            using (StreamReader leitor = new StreamReader(Assets.Open("Cidades.txt")))
+            
+            using (StreamReader leitor = CriarStreamReader())
             {
                 while (!leitor.EndOfStream)
                 {
@@ -63,6 +65,7 @@ namespace apCidadesEuropa
 
                 leitor.Close();
             }
+            
 
             sOrigem.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, listaNomes);
             sDestino.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, listaNomes);
@@ -87,6 +90,15 @@ namespace apCidadesEuropa
                 intent.PutStringArrayListExtra("nomes", listaNomes);
                 StartActivityForResult(intent, 1);
             };
+        }
+
+        private StreamReader CriarStreamReader()
+        {
+            string sandbox = FilesDir.AbsolutePath;
+            arquivo = System.IO.Path.Combine(sandbox, "cidades.txt");
+            if (!File.Exists(arquivo))
+                return new StreamReader(Assets.Open("Cidades.txt"));
+            return new StreamReader(arquivo);
         }
 
         private void MontarGrafo()
@@ -230,7 +242,10 @@ namespace apCidadesEuropa
 
         private void SalvarArquivoDeCidades() //O método OnDestroy() chama SalvarArquivoDeCidades() para salvar as cidades eventualmente adicionadas (percorre hash de cidades inteiro)
         {
-            using (StreamWriter streamWriter = new StreamWriter(Assets.Open("Cidades.txt")))
+            if (!File.Exists(arquivo))
+                File.Create(arquivo);
+
+            using (StreamWriter streamWriter = new StreamWriter(arquivo))
             {
                 for(int i=0; i<grafoCidades.NumVerts; i++)
                 {
@@ -243,7 +258,10 @@ namespace apCidadesEuropa
 
         private void SalvarArquivoDeCaminhos() //O método OnDestroy() chama SalvarArquivoDeCaminhos() para salvar as cidades eventualmente adicionadas (percorre o grafo de cidades inteiro)
         {
-            using (StreamWriter streamWriter = new StreamWriter(Assets.Open("Cidades.txt")))
+            if (!File.Exists(arquivo))
+                File.Create(arquivo); 
+
+            using (StreamWriter streamWriter = new StreamWriter(arquivo))
             {
                 for (int i = 0; i < grafoCidades.NumVerts; i++)
                 {
@@ -304,7 +322,7 @@ namespace apCidadesEuropa
                     }
                     else
                     {
-                        //Toast.MakeText(ApplicationContext, "Não conseguimos recuperar as informações relacionadas à cidade", ToastLength.Long).Show();
+                        Toast.MakeText(ApplicationContext, "Não conseguimos recuperar as informações relacionadas à cidade", ToastLength.Long).Show();
                     }
                     
                 }
@@ -327,14 +345,14 @@ namespace apCidadesEuropa
                     }
                     else
                     {
-
+                        Toast.MakeText(ApplicationContext, "Não conseguimos recuperar as informações relacionadas ao caminho", ToastLength.Long).Show();
                     }
                 }
 
             }
             else
             {
-               // Toast.MakeText(ApplicationContext, "Result Code not OK", ToastLength.Short).Show();
+                Toast.MakeText(ApplicationContext, "Ocorreu um erro inesperado", ToastLength.Short).Show();
             }
         }
     }
