@@ -321,6 +321,15 @@ namespace apCidadesEuropa
                // Toast.MakeText(ApplicationContext, "Result Code not OK", ToastLength.Short).Show();
             }
         }
+
+
+
+
+
+
+
+
+
     }
 }
 
