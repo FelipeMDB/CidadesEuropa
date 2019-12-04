@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 
+//Felipe Melchior de Britto  RA:18200
+//Gabrielle da Silva Barbosa RA:18183
 class Grafo
 {
     private const int NUM_VERTICES = 100;

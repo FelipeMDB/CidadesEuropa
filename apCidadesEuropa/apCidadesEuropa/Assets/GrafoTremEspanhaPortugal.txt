@@ -1,5 +1,4 @@
 Madrid         Salamanca       220  150
-Madrid         Guarda          900   10
 Salamanca      Guarda          160   90
 Guarda         Viseu            76   80
 Madrid         Albacete        257  280

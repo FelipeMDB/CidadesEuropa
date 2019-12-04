@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
+//Felipe Melchior de Britto  RA:18200
+//Gabrielle da Silva Barbosa RA:18183
 class BucketHash
 {
     public const int SIZE = 103;

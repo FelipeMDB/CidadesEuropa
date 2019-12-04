@@ -10,6 +10,8 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 
+//Felipe Melchior de Britto  RA:18200
+//Gabrielle da Silva Barbosa RA:18183
 namespace apCidadesEuropa
 {
     [Activity(Label = "AdicionarCaminhoActivity")]
@@ -50,9 +52,9 @@ namespace apCidadesEuropa
             {
                 int distancia = 0, tempo = 0;
 
-                if(!int.TryParse(edtDistancia.Text, out distancia) || !int.TryParse(edtTempo.Text, out tempo) )
+                if(!int.TryParse(edtDistancia.Text, out distancia) || !int.TryParse(edtTempo.Text, out tempo) || distancia < 0 || tempo < 0)
                 {
-                    Toast.MakeText(this, "Por favor digite apenas números inteiros", ToastLength.Long).Show();
+                    Toast.MakeText(this, "Por favor digite apenas números inteiros e positivos", ToastLength.Long).Show();
                 }
                 else
                 {

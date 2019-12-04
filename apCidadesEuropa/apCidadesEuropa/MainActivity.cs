@@ -14,6 +14,8 @@ using Android.Provider;
 using System.Collections.Generic;
 using static Android.Views.View;
 
+//Felipe Melchior de Britto  RA:18200
+//Gabrielle da Silva Barbosa RA:18183
 namespace apCidadesEuropa
 {
     [Activity(Label = "apCidadesEuropa", MainLauncher = true)]
@@ -112,6 +114,7 @@ namespace apCidadesEuropa
             };
         }
 
+        //cria o streamReader para ler o arquivo Cidades.txt e, se não está na memória interna, usa o do Assets
         private StreamReader CriarStreamReaderCidades()
         {
             string sandbox = FilesDir.AbsolutePath;
@@ -120,6 +123,9 @@ namespace apCidadesEuropa
                 return new StreamReader(Assets.Open("Cidades.txt"));
             return new StreamReader(arquivoCidades);
         }
+
+
+        //cria o streamReader para ler o arquivo GrafoTremEspanhaPortugal.txt e, se não está na memória interna, usa o do Assets
         private StreamReader CriarStreamReaderCaminhos()
         {
             string sandbox = FilesDir.AbsolutePath;
@@ -129,9 +135,7 @@ namespace apCidadesEuropa
             return new StreamReader(arquivoCaminhos);
         }
 
-
-
-        
+        //adiciona arestas e vértices na variável grafoCidades
         private void MontarGrafo()
         {
             //lendo os caminhos do arquivo texto
@@ -150,6 +154,7 @@ namespace apCidadesEuropa
 
                     //esta aresta contém as informações de distância e tempo além de se relacionar com sua origem e destino
                     grafoCidades.NovaAresta(idCidadeOrigem, idCidadeDestino, new InformacoesPercurso(distancia, tempo));
+                    grafoCidades.NovaAresta(idCidadeDestino, idCidadeOrigem, new InformacoesPercurso(distancia, tempo));
                 }
 
                 leitor.Close();
@@ -211,33 +216,40 @@ namespace apCidadesEuropa
             Bitmap workingBitmap = myBitmap.Copy(myBitmap.GetConfig(), true);
             meuCanvas = new Canvas(workingBitmap);
 
-            for (int i = 0; i < grafoCidades.NumVerts; i++)
+            for (int i = 0; i < grafoCidades.NumVerts; i++) //percorre os rótulos do grafo, que contêm os nomes de cidade 
             {
-                Cidade c = ProcurarCidadePorNome(grafoCidades.GetRotulo(i));
-                DesenharCidade(c);
+                Cidade c = ProcurarCidadePorNome(grafoCidades.GetRotulo(i)); //pega a cidade através do rótulo pelo método ProcurarCidadePorNome
+                DesenharCidade(c); //Manda desenhar a cidade
             }
 
-            if (caminho != null)
+            if (caminho != null) //se o usuário buscou um caminho, o vetor de string de caminho fica preenchido, 
+                                //e entra aqui para desenhar o caminho e escrever a rota no resultados (faz ambos com apenas uma vez percorrendo)
             {
-                tvResultado.Text = caminho[0];
-                int distancia = 0, tempo = 0;
                 meuPaint.Color = Color.Red;
+                meuPaint.StrokeWidth = 6;
                 Cidade destino = ProcurarCidadePorNome(caminho[0]);
                 Cidade origem;
+
+                tvResultado.Text = caminho[0]; //mostra a primeira cidade
+                int distancia = 0, tempo = 0; //variáveis para contabilizar distância e tempo
+
                 for (int i = 1; caminho[i] != null; i++)
                 {
                     tvResultado.Text += " -> " + caminho[i];
-                    origem = destino;
-                    destino = ProcurarCidadePorNome(caminho[i]);
-                    distancia += grafoCidades[origem.IdCidade, destino.IdCidade].Distancia;
-                    tempo += grafoCidades[origem.IdCidade, destino.IdCidade].Tempo;
-                    DesenharCaminho(origem, destino);
+
+                    origem = destino; //a origem pega sempre o que foi o destino anterior
+                    destino = ProcurarCidadePorNome(caminho[i]); //pega a próxima cidade do caminho
+
+                    distancia += grafoCidades[origem.IdCidade, destino.IdCidade].Distancia; //conta distância
+                    tempo += grafoCidades[origem.IdCidade, destino.IdCidade].Tempo;         //conta tempo
+
+                    DesenharCaminho(origem, destino); //desenha o caminho de acordo com as informações das cidades origem e destino
                 }
-                tvResultado.Text += "\n" + distancia + "km";
-                tvResultado.Text += "\n" + tempo + "min";
+                tvResultado.Text += "\n" + distancia + "km"; //mostra distância
+                tvResultado.Text += "\n" + tempo + "min";   //mostra tempo
             }
 
-            imgMapa.SetImageBitmap(workingBitmap);
+            imgMapa.SetImageBitmap(workingBitmap); //coloca o bitmap final na ImageView de mapa
 
         }
 
@@ -249,6 +261,7 @@ namespace apCidadesEuropa
             meuCanvas.DrawText(c.NomeCidade, meuCanvas.Width * c.CoordenadaX - 70, meuCanvas.Height * c.CoordenadaY - 25, meuPaint);
         }
 
+        //desenha um ponto representando a posição das cidades origem e destino e faz uma ligação entre elas
         private void DesenharCaminho(Cidade origem, Cidade destino)
         {
             meuCanvas.DrawCircle(meuCanvas.Width * origem.CoordenadaX, meuCanvas.Height * origem.CoordenadaY, 10, meuPaint);
@@ -347,6 +360,7 @@ namespace apCidadesEuropa
                         {
                             InformacoesPercurso info = new InformacoesPercurso(distancia, tempo);
                             grafoCidades.NovaAresta(idOrigem, idDestino, info);
+                            grafoCidades.NovaAresta(idDestino, idOrigem, info);
                         }
                         else
                             Toast.MakeText(ApplicationContext, "O caminho que você tentou adicionar já existe", ToastLength.Long).Show();
@@ -359,41 +373,44 @@ namespace apCidadesEuropa
             }
         }
 
-        /
+        //quando a pessoa sai da activity, o OnStop é acionado
         protected override void OnStop()
         {
-            if (!ehIntent)
+            base.OnStop();
+            if (!ehIntent) //verificamos se o OnStop não foi acionado por causa da intent que muda pra adicionar cidades ou adicionar caminhos
             {
                 SalvarArquivoDeCidades();
                 SalvarArquivoDeCaminhos();
             }
         }
-
-
+        
+        //método para salvar o arquivo Cidades.txt atualizado
         private void SalvarArquivoDeCidades() //O método OnDestroy() chama SalvarArquivoDeCidades() para salvar as cidades eventualmente adicionadas (percorre hash de cidades inteiro)
         {
             using (StreamWriter streamWriter = new StreamWriter(arquivoCidades))
             {
-                for (int i = 0; i < grafoCidades.NumVerts; i++)
+                for (int i = 0; i < grafoCidades.NumVerts; i++) //percorre rótulos
                 {
-                    Cidade c = ProcurarCidadePorNome(grafoCidades.GetRotulo(i));
-                    Cidade.EscreverNoArquivo(streamWriter, c);
+                    Cidade c = ProcurarCidadePorNome(grafoCidades.GetRotulo(i)); //busca cidade pelo nome
+                    Cidade.EscreverNoArquivo(streamWriter, c); //escreve cidade no arquivo
                 }
-                streamWriter.Close();
             }
         }
 
+
+        //método para salvar o arquivo GrafoTremEspanhaPortugal.txt atualizado
         private void SalvarArquivoDeCaminhos() //O método OnDestroy() chama SalvarArquivoDeCaminhos() para salvar as cidades eventualmente adicionadas (percorre o grafo de cidades inteiro)
         {
             using (StreamWriter streamWriter = new StreamWriter(arquivoCaminhos))
             {
-                for (int i = 0; i < grafoCidades.NumVerts; i++)
+                for (int i = 0; i < grafoCidades.NumVerts; i++) //percorre linhas (origem)
                 {
-                    for (int j = 0; j < grafoCidades.NumVerts; j++)
+                    for (int j = 0; j < grafoCidades.NumVerts; j++) //percorre colunas (destino)
                     {
                         InformacoesPercurso info = grafoCidades[i, j];
-                        if (info.Distancia != grafoCidades.Infinity)
+                        if (info.Distancia != grafoCidades.Infinity) //verifica se a distância guardada não é infinity (não existe caminho)
                         {
+                            //escreve no arquivo
                             streamWriter.WriteLine(grafoCidades.GetRotulo(i).PadRight(15, ' ')
                                                     + grafoCidades.GetRotulo(j).PadRight(15, ' ')
                                                     + info.Distancia.ToString().PadLeft(4, ' ')
@@ -402,7 +419,6 @@ namespace apCidadesEuropa
 
                     }
                 }
-                streamWriter.Close();
             }
         }
 

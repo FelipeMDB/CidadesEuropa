@@ -12,6 +12,8 @@ using Android.Views;
 using Android.Widget;
 using Java.IO;
 
+//Felipe Melchior de Britto  RA:18200
+//Gabrielle da Silva Barbosa RA:18183
 namespace apCidadesEuropa
 {
     [Activity(Label = "AdicionarCidadeActivity")]
@@ -100,18 +102,23 @@ namespace apCidadesEuropa
                 //vemos se no campo de coordenada apenas números floats foram escritos
                 if (!int.TryParse(edtXCidade.Text, out coordX) || !int.TryParse(edtYCidade.Text, out coordY))
                 {
-                    Toast.MakeText(ApplicationContext, "Por favor digite apenas números com até duas casas decimais nos campos de coordenadas", ToastLength.Long).Show();
+                    Toast.MakeText(ApplicationContext, "Por favor, digite apenas números inteiros", ToastLength.Long).Show();
                 }
                 else
                 {
-                    //envia os valores para a página principal para que nela eles possam ser convertidos em uma cidade e salvos nos respectivos arquivos.
-                    float x = float.Parse(coordX.ToString()) / 1000, y = float.Parse(coordY.ToString()) / 1000;
-                    Intent intent = new Intent();
-                    intent.PutExtra("nome", edtNomeCidade.Text);
-                    intent.PutExtra("x", x);
-                    intent.PutExtra("y", y);
-                    SetResult(Result.Ok, intent);
-                    Finish();
+                    if (coordX <= 1000 && coordX >= 0 && coordY <= 1000 && coordY >= 0)
+                    {
+                        //envia os valores para a página principal para que nela eles possam ser convertidos em uma cidade e salvos nos respectivos arquivos.
+                        float x = float.Parse(coordX.ToString()) / 1000, y = float.Parse(coordY.ToString()) / 1000;
+                        Intent intent = new Intent();
+                        intent.PutExtra("nome", edtNomeCidade.Text);
+                        intent.PutExtra("x", x);
+                        intent.PutExtra("y", y);
+                        SetResult(Result.Ok, intent);
+                        Finish();
+                    }
+                    else
+                        Toast.MakeText(ApplicationContext, "Os valores de coordenadas devem estar num intervalo de 0 a 1000\nPara uma maior noção, veja sua cidade no mapa ilustrativo", ToastLength.Long).Show();
                 }
             }
             else

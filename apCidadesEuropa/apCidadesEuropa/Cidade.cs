@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 
 //Felipe Melchior de Britto  RA:18200
-//Gabrielle da Silva Barbosa RA:18200
+//Gabrielle da Silva Barbosa RA:18183
 class Cidade : IComparable<Cidade>
 {
 
@@ -56,9 +56,9 @@ class Cidade : IComparable<Cidade>
     //método para adaptar a classe para a scrita em um arquivo txt
     public static void EscreverNoArquivo(StreamWriter arq, Cidade c)
     {
-        arq.WriteLine(c.idCidade.ToString().PadLeft(tamanhoIdCidade, ' '), 
-                      c.nomeCidade.PadRight(tamanhoNomeCidade, ' '),
-                      c.coordenadaX.ToString().PadLeft(tamanhoCoordenadaX, ' '),
+        arq.WriteLine(c.idCidade.ToString().PadLeft(tamanhoIdCidade, ' ')+ 
+                      c.nomeCidade.PadRight(tamanhoNomeCidade, ' ')+
+                      c.coordenadaX.ToString().PadLeft(tamanhoCoordenadaX, ' ')+
                       c.coordenadaY.ToString().PadLeft(tamanhoCoordenadaY, ' '));
     }
 
