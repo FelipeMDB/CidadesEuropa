@@ -42,17 +42,19 @@ class Grafo
         percurso = new DistOriginal[NUM_VERTICES];
     }
 
+    //adiciona um novo vértice (contém o "rótulo" da linha/coluna, se foi visitado e se está ativo)
     public void NovoVertice(string label)
     {
         vertices[numVerts] = new Vertice(label);
         numVerts++;
     }
 
+    //adiciona uma nova aresta, ou seja, as informações do percurso entre dois vértices
     public void NovaAresta(int origem, int destino, InformacoesPercurso peso)
     {
         adjMatrix[origem, destino] = peso;
     }
-
+    
     public string[] Caminho(int inicioDoPercurso, int finalDoPercurso)
     {
         for (int j = 0; j < numVerts; j++)
@@ -61,25 +63,25 @@ class Grafo
         vertices[inicioDoPercurso].foiVisitado = true;
         for (int j = 0; j < numVerts; j++)
         {
-            // anotamos no vetor percurso a distância entre o inicioDoPercurso e cada vértice
-            // se não há ligação direta, o valor da distância será infinity
+            // anotamos no vetor percurso o peso (informacoesPercurso) entre o inicioDoPercurso e cada vértice
+            // se não há ligação direta, o valor da distância e do tempo serão infinity
             percurso[j] = new DistOriginal(inicioDoPercurso, new InformacoesPercurso(adjMatrix[inicioDoPercurso, j].Distancia, adjMatrix[inicioDoPercurso, j].Tempo));
         }
 
         for (int nTree = 0; nTree < numVerts; nTree++)
         {
-            // Procuramos a saída não visitada do vértice inicioDoPercurso com a menor distância
+            // Procuramos a saída não visitada do vértice inicioDoPercurso com o menor peso
             int indiceDoMenor = ObterMenor();
             
-            // o vértice com a menor distância passa a ser o vértice atual
-            // para compararmos com a distância calculada em AjustarMenorCaminho()
+            // o vértice com menor peso passa a ser o vértice atual
+            // para compararmos com o peso calculado em AjustarMenorCaminho()
             verticeAtual = indiceDoMenor;
-            if(UsarTempo)
+            if(UsarTempo)//valor de peso depende se está levando em conta o tempo ou a distância
                 doInicioAteAtual = percurso[indiceDoMenor].peso.Tempo;
             else
                 doInicioAteAtual = percurso[indiceDoMenor].peso.Distancia;
 
-            // visitamos o vértice com a menor distância desde o inicioDoPercurso
+            // visitamos o vértice com menor peso desde o inicioDoPercurso
             vertices[verticeAtual].foiVisitado = true;
             AjustarMenorCaminho();
         }
@@ -87,7 +89,7 @@ class Grafo
         return ExibirPercursos(inicioDoPercurso, finalDoPercurso);
     }
 
-    public int ObterMenor()
+    public int ObterMenor() //Obtém menor adjacência
     {
         int indiceDaMinima = 0;
 
@@ -114,21 +116,22 @@ class Grafo
         for (int coluna = 0; coluna < numVerts; coluna++)
             if (!vertices[coluna].foiVisitado)       // para cada vértice ainda não visitado
             {
-                // acessamos a distância desde o vértice atual (pode ser infinity)
+                // acessamos o peso desde o vértice atual (pode ser infinity)
                 int atualAteMargem;
+
                 if(UsarTempo)
                     atualAteMargem = adjMatrix[verticeAtual, coluna].Tempo;
                 else
                     atualAteMargem = adjMatrix[verticeAtual, coluna].Distancia;
 
-                // calculamos a distância desde inicioDoPercurso passando por vertice atual até
+                // calculamos o peso desde inicioDoPercurso passando por vertice atual até
                 // esta saída
                 
                 int doInicioAteMargem = doInicioAteAtual + atualAteMargem;
 
-                // quando encontra uma distância menor, marca o vértice a partir do
-                // qual chegamos no vértice de índice coluna, e a soma da distância
-                // percorrida para nele chegar
+                // quando encontra um peso menor, marca o vértice a partir do
+                // qual chegamos no vértice de índice coluna, e a soma do peso
+                // percorrido para nele chegar
 
                 bool ehMenor; 
                 if (UsarTempo)
@@ -136,7 +139,7 @@ class Grafo
                 else
                     ehMenor = doInicioAteMargem < percurso[coluna].peso.Distancia;
                 
-                if (ehMenor)
+                if (ehMenor) //se for o menor peso, guarda o vértice
                 {
                     percurso[coluna].verticePai = verticeAtual;
                     if(UsarTempo)
@@ -147,14 +150,14 @@ class Grafo
             }
     }
 
-    public string[] ExibirPercursos(int inicioDoPercurso, int finalDoPercurso)
+    public string[] ExibirPercursos(int inicioDoPercurso, int finalDoPercurso) //percorre o percurso encontrado pelos vértices pai 
     {
         string[] oCaminho = new string[percurso.Length];
         
         int onde = finalDoPercurso;
         Stack<string> pilha = new Stack<string>();
 
-        int cont = 0;
+        int cont = 0; //variável que conta quantidade de cidades percorridas
         while (onde != inicioDoPercurso)
         {
             onde = percurso[onde].verticePai;
@@ -163,14 +166,14 @@ class Grafo
         }
 
         int contador = 0;
-        while (pilha.Count != 0)
+        while (pilha.Count != 0) //desempilha caminhos e guarda em um vetor de string que será retornado
         {
             oCaminho[contador] = pilha.Pop();
             
             contador++;
         }
 
-        if ((cont == 1) && (percurso[finalDoPercurso].peso.Distancia >= infinity))
+        if ((cont == 1) && (percurso[finalDoPercurso].peso.Distancia >= infinity)) //se só havia uma cidade no percurso ou a distância percorrida foi igual ou maior infinity, quer dizer que não há caminhos possíveis
             return null;
         else
             oCaminho[contador] = vertices[finalDoPercurso].rotulo;
@@ -188,7 +191,7 @@ class Grafo
         return adjMatrix[li, col];
     }
 
-    public InformacoesPercurso this[int o, int d] { get => adjMatrix[o, d]; }
+    public InformacoesPercurso this[int o, int d] { get => adjMatrix[o, d]; } //método que torna possível a indexação de um objeto dessa classe
 
     /*public void ExibirVertice(int v)
     {
