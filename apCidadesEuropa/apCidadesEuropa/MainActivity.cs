@@ -43,6 +43,8 @@ namespace apCidadesEuropa
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
 
+
+            //declaração de todos os objetos e variáveis que serão utilizadas no programa principal
             btnBuscar = FindViewById<Button>(Resource.Id.btnBuscar);
             sOrigem = FindViewById<Spinner>(Resource.Id.spinnerOrigem);
             sDestino = FindViewById<Spinner>(Resource.Id.spinnerDestino);
@@ -59,6 +61,8 @@ namespace apCidadesEuropa
             quantasCidades = 0;
             ehIntent = false;
 
+
+            //leitura do arquivo texto de cidades para o grafo e para a lista de nomes de cidades
             using (StreamReader leitor = CriarStreamReaderCidades())
             {
                 while (!leitor.EndOfStream)
@@ -74,17 +78,22 @@ namespace apCidadesEuropa
             }
             
 
+            //fazemos com que os spinners de recebam as cidades lidas no arquivo
             sOrigem.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, listaNomes);
             sDestino.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, listaNomes);
 
+            //desenhamos as cidades e montamos o grafo
             Desenhar();
             MontarGrafo();
 
+
+            //código do btnBuscar, que realiza a busca de caimnhos entre duas cidades de acordo com o tempo ou a distância 
             btnBuscar.Click += delegate
             {
                 BuscarCaminho(sOrigem.SelectedItem.ToString(), sDestino.SelectedItem.ToString(), false);
             };
 
+            //código do btnAdicionarCidade que cria uma intent e manda para a respectiva página
             btnAddCidade.Click += delegate
             {
                 ehIntent = true;
@@ -92,6 +101,8 @@ namespace apCidadesEuropa
                 StartActivityForResult(intent, 0);
             };
 
+            //código do btnAddCaminho que cria uma intent e manda para a respectiva página, enviando os nomes de todas as cidades existentes para que um caminho possa ser criado
+            //através da seleção de duas cidades
             btnAddCaminho.Click += delegate
             {
                 ehIntent = true;
@@ -118,12 +129,17 @@ namespace apCidadesEuropa
             return new StreamReader(arquivoCaminhos);
         }
 
+
+
+        
         private void MontarGrafo()
         {
+            //lendo os caminhos do arquivo texto
             using (StreamReader leitor = CriarStreamReaderCaminhos())
             {
                 while (!leitor.EndOfStream)
                 {
+                    //salvamos as informações necessárias relacionadas ao caminho e criamos uma nova aresta no grafo
                     string linha = leitor.ReadLine();
                     string nomeCidadeOrigem = linha.Substring(0, 15).Trim();
                     string nomeCidadeDestino = linha.Substring(15, 15).Trim();
@@ -132,16 +148,20 @@ namespace apCidadesEuropa
                     int idCidadeOrigem = ProcurarIdCidadePorNome(nomeCidadeOrigem);
                     int idCidadeDestino = ProcurarIdCidadePorNome(nomeCidadeDestino);
 
+                    //esta aresta contém as informações de distância e tempo além de se relacionar com sua origem e destino
                     grafoCidades.NovaAresta(idCidadeOrigem, idCidadeDestino, new InformacoesPercurso(distancia, tempo));
                 }
 
                 leitor.Close();
             }
         }
-        
-        //retorna -1 caso não exista a cidade
+
+        //método para se procurar por uma cidade atráves de seu nome
+        //se encontrar a cidade retorna o "id" dela
+        //caso não encontre, retorna -1
         private int ProcurarIdCidadePorNome(string nome)
         {
+            //toUpper para evitar diferenciação de letras maiúsculas e minúsculas (case sensitive)
             ListaSimples<Cidade> lista = bucketHashCidades.GetPosicao(bucketHashCidades.Hash(nome.ToUpper()));
 
             NoLista<Cidade> atual = lista.Primeiro;
@@ -156,6 +176,7 @@ namespace apCidadesEuropa
             return -1;
         }
 
+        //semelhante ao método acima mas retorna uma cidade ao invés de um "id"
         //retorna null caso não exista a cidade
         private Cidade ProcurarCidadePorNome(string nome)
         {
@@ -172,6 +193,10 @@ namespace apCidadesEuropa
             }
             return null;
         }
+
+
+        //desenho no mapa 
+        //utilizamos paint e canvas para se desenhar e bitmap para manipulação da imagem
 
         Paint meuPaint;
         Canvas meuCanvas;
@@ -216,6 +241,8 @@ namespace apCidadesEuropa
 
         }
 
+
+        //desenha um ponto representando a posição da cidade e escreve o nome da cidade acima desse ponto 
         private void DesenharCidade(Cidade c)
         {
             meuCanvas.DrawCircle(meuCanvas.Width * c.CoordenadaX, meuCanvas.Height * c.CoordenadaY, 10, meuPaint);
@@ -229,17 +256,24 @@ namespace apCidadesEuropa
             meuCanvas.DrawLine(meuCanvas.Width * origem.CoordenadaX, meuCanvas.Height * origem.CoordenadaY, meuCanvas.Width * destino.CoordenadaX, meuCanvas.Height * destino.CoordenadaY, meuPaint);
         }
 
+
+        //busca um caminho entre cidades
         private void BuscarCaminho(string cidadeOrigem, string cidadeDestino, bool usarTempo)
         {
+            //verifica se destino e origem são diferentes 
             if (cidadeDestino == cidadeOrigem)
             {
                 Toast.MakeText(this, "A origem e o destino são os mesmos", ToastLength.Short).Show();
             }
             else
             {
+                //verifica se o usuário deseja procurar por tempo ou distância
                 grafoCidades.UsarTempo = rbTempo.Checked;
+
+                //utiliza o grafo para se procurar um caminho e salva no vetor de strings "caminho"
                 caminho = grafoCidades.Caminho(ProcurarIdCidadePorNome(cidadeOrigem), ProcurarIdCidadePorNome(cidadeDestino));
 
+                //exibe o caminho na tela
                 tvResultado.Text = "";
                 if (caminho != null)
                     Desenhar();
@@ -256,12 +290,15 @@ namespace apCidadesEuropa
             ehIntent = false;
             if (resultCode == Result.Ok)
             {
+                //caso a requisição seja a requisição de criar uma cidade
                 if (requestCode == 0)
                 {
+                    //recuperamos todas as informações mandadas por uma intent vinda da activity de criar uma cidade
                     string nomeCidade = data.GetStringExtra("nome");
                     float coordenadaX = data.GetFloatExtra("x", -1);
                     float coordenadaY = data.GetFloatExtra("y", -1);
 
+                    //verificamos se todas as informações foram recebidas
                     if (nomeCidade != null && nomeCidade != "" && coordenadaX != -1 && coordenadaY != -1)
                     {
 
@@ -269,13 +306,15 @@ namespace apCidadesEuropa
                         {
                             //definimos um id automaticamente para a cidade (com base na quantidade de cidades já que o primeiro id é 0)
 
+                            //criamos uma cidade nova e salvamos seu id de acordo com a quantidade de cidades para que os ids sejam salvos automaticamente de forma crescente 
                             Cidade cidade = new Cidade(quantasCidades, nomeCidade, coordenadaX, coordenadaY);
                             quantasCidades++;
+                            //inserimos a cidade no bucket e no grafo
                             bucketHashCidades.Insert(cidade);
                             grafoCidades.NovoVertice(cidade.NomeCidade);
                             listaNomes.Add(cidade.NomeCidade);
 
-
+                            //recebe novamente para que a cidade nova seja adicionada
                             sOrigem.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, listaNomes);
                             sDestino.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, listaNomes);
                         }
@@ -286,16 +325,19 @@ namespace apCidadesEuropa
                     }
                     else
                         Toast.MakeText(ApplicationContext, "Não conseguimos recuperar as informações relacionadas à cidade", ToastLength.Long).Show();
-                    
+
                 }
-                else if(requestCode == 1)
+                //caso a requisição seja a requisição de criar um caminho
+                else if (requestCode == 1)
                 {
+                    //recuperamos todas as informações mandadas por uma intent vinda da activity de criar um caminho
                     string novaOrigem = data.GetStringExtra("spnNovaOrigem");
                     string novoDestino = data.GetStringExtra("spnNovoDestino");
                     int distancia = data.GetIntExtra("edtDistancia", -1);
                     int tempo = data.GetIntExtra("edtTempo", -1);
 
 
+                    //verificamos se todas as informações foram recebidas
                     if (novaOrigem != null && novoDestino != null && distancia != -1 && tempo != -1)
                     {
                         int idOrigem = ProcurarIdCidadePorNome(novaOrigem);
@@ -317,6 +359,7 @@ namespace apCidadesEuropa
             }
         }
 
+        /
         protected override void OnStop()
         {
             if (!ehIntent)

@@ -53,6 +53,7 @@ class Cidade : IComparable<Cidade>
         return new Cidade(idCidade, nomeCidade, coordenadaX, coordenadaY);
     }
 
+    //método para adaptar a classe para a scrita em um arquivo txt
     public static void EscreverNoArquivo(StreamWriter arq, Cidade c)
     {
         arq.WriteLine(c.idCidade.ToString().PadLeft(tamanhoIdCidade, ' '), 
